@@ -1,0 +1,74 @@
+<?php
+$app->add(function($req,$handler){
+    $path=$req->getUri()->getPath();$public=in_array($path,['/api/login','/api/register','/api/session','/api/logout'],true);
+    if(!in_array($req->getMethod(),['GET','HEAD','OPTIONS'],true)&&!hash_equals($_SESSION['csrf'],$req->getHeaderLine('X-CSRF-Token')))return jsonResponse(new Response(),['error'=>'Sesión vencida. Actualice la página.'],403);
+    if(!$public){$u=liveUser();if(!$u)return jsonResponse(new Response(),['error'=>'Inicie sesión para continuar.'],401);$GLOBALS['currentUser']=$u;if($u['mustChangePassword']&&$path!=='/api/password')return deny(new Response(),'Cambie la contraseña temporal para continuar.');}
+    return $handler->handle($req);
+});
+$app->get('/api/session',function($req,$res){$u=liveUser();return jsonResponse($res,['authenticated'=>(bool)$u,'user'=>$u?userPublic($u):null,'csrf'=>$_SESSION['csrf'],'profile'=>appProfile()]);});
+$app->post('/api/register',function($req,$res){if(!authLimit('registration-ip:'.($_SERVER['REMOTE_ADDR']??''),10))return jsonResponse($res,['error'=>'Demasiados registros. Reintente en diez minutos.'],429);return jsonResponse($res,['ok'=>true,'user'=>createUser($req->getParsedBody(),true)],201);});
+$app->post('/api/login',function($req,$res){
+    $b=$req->getParsedBody();$email=emailInput($b['email']??'');
+    if(!authLimit('login-ip:'.($_SERVER['REMOTE_ADDR']??''),30)||!authLimit('login-email:'.$email,10))return jsonResponse($res,['error'=>'Demasiados intentos. Espere diez minutos.'],429);
+    $u=db()->odac_users->findOne(['email'=>$email]);$hash=$u['passwordHash']??accessHash();
+    $password=loginPassword($b['password']??'');$ok=password_verify($password,$hash);
+    if(!$ok||!$u||!$u['active']||($u['role']==='administrador'&&!in_array($u['id'],adminIds(),true)))return jsonResponse($res,['error'=>'Correo o contraseña incorrectos, o cuenta desactivada.'],401);
+    if(password_needs_rehash($hash,PASSWORD_DEFAULT))db()->odac_users->updateOne(['id'=>$u['id'],'version'=>$u['version']],['$set'=>['passwordHash'=>password_hash($password,PASSWORD_DEFAULT)]]);
+    beginUserSession($u);$GLOBALS['currentUser']=$u;audit('inicio_sesion',$u['id']);return jsonResponse($res,['ok'=>true,'user'=>userPublic($u),'csrf'=>$_SESSION['csrf']]);
+});
+$app->post('/api/logout',function($req,$res){$_SESSION=[];if(ini_get('session.use_cookies')){$c=session_get_cookie_params();setcookie(session_name(),'', ['expires'=>time()-3600,'path'=>$c['path'],'domain'=>$c['domain'],'secure'=>$c['secure'],'httponly'=>true,'samesite'=>'Strict']);}session_destroy();return jsonResponse($res,['ok'=>true]);});
+$app->post('/api/password',function($req,$res){$u=actor();$b=$req->getParsedBody();if(!authLimit('password-change:'.$u['id'],10))return jsonResponse($res,['error'=>'Demasiados intentos. Espere diez minutos.'],429);if(!password_verify(loginPassword($b['currentPassword']??''),$u['passwordHash']))return deny($res,'La contraseña actual no coincide.');$p=passwordInput($b['password']??'');if(password_verify($p,$u['passwordHash']))throw new InvalidArgumentException('Use una contraseña diferente.');$r=db()->odac_users->updateOne(['id'=>$u['id'],'version'=>$u['version']],['$set'=>['passwordHash'=>password_hash($p,PASSWORD_DEFAULT),'mustChangePassword'=>false],'$inc'=>['version'=>1]]);if(!$r->getMatchedCount())return jsonResponse($res,['error'=>'La cuenta cambió. Inicie sesión nuevamente.'],409);$u['version']++;$u['mustChangePassword']=false;beginUserSession($u);audit('cambio_contraseña',$u['id']);return jsonResponse($res,['ok'=>true,'user'=>userPublic($u),'csrf'=>$_SESSION['csrf']]);});
+$app->get('/api/health',function($req,$res){return jsonResponse($res,['mongo'=>true,'redis'=>(bool)redisClient(),'profile'=>appProfile()]);});
+$app->get('/api/tickets',fn($req,$res)=>jsonResponse($res,visibleTickets()));
+$app->get('/api/queue',function($req,$res){
+    $u=actor();$key=connectionConfig()['namespace'].':queue:'.$u['id'].':'.$u['version'].':';$r=redisClient();
+    try{if($r){$key.=($r->get(connectionConfig()['namespace'].':version')?:'0');$cache=$r->get($key);if($cache!==false)return jsonResponse($res,['items'=>json_decode($cache,true),'source'=>'Redis']);}}catch(Throwable $e){$r=null;}
+    $items=array_values(array_filter(visibleTickets(),fn($t)=>$t['status']!=='Resuelto'));usort($items,fn($a,$b)=>queueScore($a)<=>queueScore($b));
+    try{if($r){$r->setex($key,15,json_encode($items));$r->del($key.':order');foreach($items as $t)$r->zAdd($key.':order',queueScore($t),$t['id']);if($items)$r->expire($key.':order',15);}}catch(Throwable $e){}
+    return jsonResponse($res,['items'=>$items,'source'=>'MongoDB']);
+});
+$app->get('/api/reports',fn($req,$res)=>isAdmin()?jsonResponse($res,reportData(visibleTickets())):deny($res));
+$app->get('/api/agents',function($req,$res){if(actor()['role']==='cliente')return jsonResponse($res,[]);$filter=isAdmin()?['active'=>true,'role'=>['$in'=>['agente','administrador']]]:['id'=>actor()['id']];return jsonResponse($res,array_map(fn($u)=>['id'=>$u['id'],'name'=>$u['name']],db()->odac_users->find($filter)->toArray()));});
+$app->post('/api/tickets',function($req,$res){
+    $u=actor();$body=$req->getParsedBody();if($u['role']!=='administrador')$body['clientId']=$u['clientId'];$body['requester']=$u['name'];$b=ticketInput($body);
+    $existing=db()->odac_tickets->findOne(['id'=>$b['id']],['projection'=>['_id'=>0]]);if($existing){if(!visibleTicket($b['id']))return deny($res);return jsonResponse($res,$existing);}
+    $client=db()->odac_clients->findOne(['id'=>$b['clientId']]);if(!$client)throw new InvalidArgumentException('Cliente no encontrado.');
+    if($b['productId']&&!db()->odac_products->findOne(['id'=>$b['productId']]))throw new InvalidArgumentException('Producto o servicio no encontrado.');
+    $b['requester']=$client['name'];$h=policy();$t=$b+['status'=>'Nuevo','assignee'=>'','assigneeId'=>'','createdBy'=>$u['id'],'createdAt'=>time(),'dueAt'=>time()+$h[$b['priority']]*3600,'history'=>[['date'=>time(),'text'=>'Solicitud registrada por '.$u['name']]]];
+    db()->odac_tickets->createIndex(['id'=>1],['unique'=>true]);db()->odac_tickets->updateOne(['id'=>$b['id']],['$setOnInsert'=>$t],['upsert'=>true]);invalidate();audit('crear_ticket',$b['id']);return jsonResponse($res,db()->odac_tickets->findOne(['id'=>$b['id']],['projection'=>['_id'=>0]]),201);
+});
+$app->patch('/api/tickets/{id}',function($req,$res,$args){
+    $t=visibleTicket($args['id']);if(!$t)return jsonResponse($res,['error'=>'Ticket no encontrado.'],404);$b=$req->getParsedBody();$u=actor();if(!$b)throw new InvalidArgumentException('No hay cambios.');$note=cleanText($b['note']??'','nota',2000,false);$set=[];
+    if($u['role']==='cliente'){if(array_diff(array_keys($b),['note']))return deny($res);if(!$note)throw new InvalidArgumentException('Escriba un comentario.');}
+    else{
+        if($t['status']==='Resuelto'&&!isAdmin())throw new InvalidArgumentException('El ticket ya está resuelto.');
+        $status=$b['status']??$t['status'];if(!is_string($status)||!in_array($status,STATUSES,true))throw new InvalidArgumentException('Estado inválido.');
+        $aid=cleanText($b['assigneeId']??($t['assigneeId']??''),'responsable',64,false);if(!isAdmin()&&$aid!==$u['id'])return deny($res,'El agente solo puede atender sus tickets.');
+        $a=$aid?db()->odac_users->findOne(['id'=>$aid,'active'=>true,'role'=>['$in'=>['agente','administrador']]]):null;if($aid&&!$a)throw new InvalidArgumentException('Responsable inválido.');
+        if($status!=='Nuevo'&&!$a)throw new InvalidArgumentException('Asigne un responsable.');if($status==='Resuelto'&&!$note)throw new InvalidArgumentException('Registre la solución.');
+        $set=['status'=>$status,'assigneeId'=>$aid,'assignee'=>$a['name']??''];if(!isset($t['firstResponseAt'])&&($a||$note))$set['firstResponseAt']=time();if($status==='Resuelto')$set['resolvedAt']=time();
+    }
+    $event=['date'=>time(),'text'=>$u['name'].': '.($note?:'Actualización').' · '.($set['status']??$t['status'])];$update=['$push'=>['history'=>$event]];if($set)$update['$set']=$set;if(isset($set['status'])&&$set['status']!=='Resuelto'&&isset($t['resolvedAt']))$update['$unset']=['resolvedAt'=>''];
+    $r=db()->odac_tickets->updateOne(['id'=>$t['id'],'history'=>$t['history']],$update);if(!$r->getMatchedCount())return jsonResponse($res,['error'=>'El ticket cambió. Actualice y reintente.'],409);invalidate();audit('actualizar_ticket',$t['id']);return jsonResponse($res,['ok'=>true]);
+});
+$app->delete('/api/tickets/{id}',function($req,$res,$args){if(!isAdmin())return deny($res);db()->odac_tickets->deleteOne(['id'=>$args['id']]);invalidate();audit('eliminar_ticket',$args['id']);return jsonResponse($res,['ok'=>true]);});
+function clientFields(array $b):array{$c=['name'=>cleanText($b['name']??'','nombre',100),'email'=>cleanText($b['email']??'','correo',160,false),'phone'=>cleanText($b['phone']??'','teléfono',40,false),'company'=>cleanText($b['company']??'','empresa',120,false)];if($c['email']&&!filter_var($c['email'],FILTER_VALIDATE_EMAIL))throw new InvalidArgumentException('Correo inválido.');if(!$c['email']&&!$c['phone'])throw new InvalidArgumentException('Indique correo o teléfono.');return $c;}
+$app->get('/api/clients',fn($req,$res)=>jsonResponse($res,db()->odac_clients->find(actor()['role']==='cliente'?['id'=>actor()['clientId']]:[],['projection'=>['_id'=>0]])->toArray()));
+$app->get('/api/products',fn($req,$res)=>jsonResponse($res,documents('odac_products')));
+$app->post('/api/clients',function($req,$res){if(!isAdmin())return deny($res);$b=$req->getParsedBody();$c=clientFields($b);$c['id']=cleanText($b['id']??'','identificador',64);$c['createdAt']=time();db()->odac_clients->createIndex(['id'=>1],['unique'=>true]);if(db()->odac_clients->findOne(['id'=>$c['id']]))throw new InvalidArgumentException('Cliente existente.');db()->odac_clients->insertOne($c);audit('crear_cliente',$c['id']);unset($c['_id']);return jsonResponse($res,$c,201);});
+$app->patch('/api/clients/{id}',function($req,$res,$args){if(!isAdmin())return deny($res);$c=clientFields($req->getParsedBody());$result=db()->odac_clients->updateOne(['id'=>$args['id']],['$set'=>$c]);if(!$result->getMatchedCount())return jsonResponse($res,['error'=>'Cliente no encontrado.'],404);audit('editar_cliente',$args['id']);return jsonResponse($res,['ok'=>true]);});
+$app->delete('/api/clients/{id}',function($req,$res,$args){if(!isAdmin())return deny($res);if(db()->odac_users->countDocuments(['clientId'=>$args['id']])||db()->odac_tickets->countDocuments(['clientId'=>$args['id']]))throw new InvalidArgumentException('El cliente tiene una cuenta o tickets vinculados.');db()->odac_clients->deleteOne(['id'=>$args['id']]);audit('eliminar_cliente',$args['id']);return jsonResponse($res,['ok'=>true]);});
+foreach(['POST','PATCH','DELETE'] as $method){$register=strtolower($method);$path='/api/products'.($method==='POST'?'':'/{id}');$app->$register($path,function($req,$res,$args=[])use($method){if(!isAdmin())return deny($res);$b=$method==='DELETE'?[]:$req->getParsedBody();$id=$method==='POST'?cleanText($b['id']??'','código',64):$args['id'];if($method==='DELETE'){if(db()->odac_tickets->countDocuments(['productId'=>$id]))throw new InvalidArgumentException('Hay tickets vinculados. Marque el producto como retirado.');db()->odac_products->deleteOne(['id'=>$id]);}else{$p=[];foreach(['name','type','category','reference','status'] as $k)$p[$k]=cleanText($b[$k]??'',$k,100);if(!in_array($p['status'],['Disponible','Suspendido','Retirado'],true))throw new InvalidArgumentException('Estado inválido.');if($method==='POST'){db()->odac_products->createIndex(['id'=>1],['unique'=>true]);if(db()->odac_products->findOne(['id'=>$id]))throw new InvalidArgumentException('Código existente.');db()->odac_products->insertOne(['id'=>$id,'createdAt'=>time()]+$p);}else{$result=db()->odac_products->updateOne(['id'=>$id],['$set'=>$p]);if(!$result->getMatchedCount())return jsonResponse($res,['error'=>'Producto no encontrado.'],404);}}audit('catalogo_'.$method,$id);return jsonResponse($res,['ok'=>true]);});}
+$app->get('/api/users',fn($req,$res)=>isAdmin()?jsonResponse($res,array_map('userPublic',documents('odac_users'))):deny($res));
+$app->post('/api/users',fn($req,$res)=>isAdmin()?jsonResponse($res,createUser($req->getParsedBody()),201):deny($res));
+$app->patch('/api/users/{id}',function($req,$res,$args){
+    if(!isAdmin())return deny($res);$u=db()->odac_users->findOne(['id'=>$args['id']]);if(!$u)return jsonResponse($res,['error'=>'Usuario no encontrado.'],404);$b=$req->getParsedBody();$role=$b['role']??$u['role'];$active=$b['active']??$u['active'];if(!in_array($role,USER_ROLES,true)||!is_bool($active))throw new InvalidArgumentException('Rol o estado inválido.');
+    $name=isset($b['name'])?cleanText($b['name'],'nombre',100):$u['name'];$email=isset($b['email'])?emailInput($b['email']):$u['email'];$other=db()->odac_users->findOne(['email'=>$email]);if($other&&$other['id']!==$u['id'])throw new InvalidArgumentException('Ese correo ya está registrado.');
+    $resetHash=isset($b['password'])?password_hash(passwordInput($b['password']),PASSWORD_DEFAULT):null;
+    $removed=$u['role']==='administrador'&&(!$active||$role!=='administrador');if($removed&&!reserveAdminRemoval($u))return deny($res,'Debe conservar al menos un administrador activo.');
+    try{$set=['role'=>$role,'active'=>$active,'name'=>$name,'email'=>$email];if(isset($b['password'])){$set['passwordHash']=$resetHash;$set['mustChangePassword']=true;}$r=db()->odac_users->updateOne(['id'=>$u['id'],'version'=>$u['version']],['$set'=>$set,'$inc'=>['version'=>1]]);if(!$r->getMatchedCount()){if($removed)restoreAdmin($u);return jsonResponse($res,['error'=>'La cuenta cambió. Actualice y reintente.'],409);}if($active&&$role==='administrador')db()->odac_settings->updateOne(['id'=>'security'],['$addToSet'=>['adminIds'=>$u['id']]]);}catch(Throwable $e){if($removed)restoreAdmin($u);throw $e;}
+    audit(isset($b['password'])?'restablecer_contraseña':'editar_usuario',$u['id'],['role'=>$role,'active'=>$active]);return jsonResponse($res,['ok'=>true]);
+});
+$app->get('/api/settings',fn($req,$res)=>jsonResponse($res,['hours'=>policy()]));
+$app->post('/api/settings',function($req,$res){if(!isAdmin())return deny($res);$hours=$req->getParsedBody()['hours']??[];foreach(SLA_HOURS as $p=>$default)if(!isset($hours[$p])||!is_int($hours[$p])||$hours[$p]<1||$hours[$p]>720)throw new InvalidArgumentException('Cada SLA debe tener entre 1 y 720 horas.');$hours=array_intersect_key($hours,SLA_HOURS);db()->odac_settings->updateOne(['id'=>'sla'],['$set'=>['hours'=>$hours]],['upsert'=>true]);audit('configurar_sla','sla',$hours);return jsonResponse($res,['ok'=>true]);});
+$app->get('/api/audit',fn($req,$res)=>isAdmin()?jsonResponse($res,db()->odac_audit->find([],['sort'=>['date'=>-1],'limit'=>200,'projection'=>['_id'=>0]])->toArray()):deny($res));

@@ -1,0 +1,25 @@
+# Credenciales y configuración local
+.env
+.env.*
+!.env.example
+config.php
+config.local.php
+private/
+ACCESO-PRIVADO.txt
+*.pem
+*.key
+*.p12
+# Dependencias y archivos generados
+vendor/
+node_modules/
+dist/
+outputs/
+work/
+coverage/
+*.log
+*.bak
+*.zip
+.DS_Store
+Thumbs.db
+data/*.json
+!data/example-ticket.json

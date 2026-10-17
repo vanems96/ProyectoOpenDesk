@@ -1,0 +1,10 @@
+{
+  "id": "example-ticket-001",
+  "subject": "Consulta de garantía de ejemplo",
+  "description": "Datos sintéticos para demostración",
+  "clientId": "demo-cliente-01",
+  "productId": "PROD-001",
+  "category": "Garantía",
+  "priority": "Media",
+  "status": "Nuevo"
+}
