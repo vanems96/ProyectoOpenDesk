@@ -10,9 +10,19 @@ interfaz con DOM simulado sobre el artefacto separado; no son prueba de
 producción ni de navegación visual. No se incluyen conexiones privadas ni
 fixtures de producción. El motor MongoDB real debe validarse en servidor.
 
-Ejecutar `php index.php --benchmark 1000 30` con MongoDB y Redis configurados.
+`php tests/integration-tools.php`: comprobaciones adicionales de conexión,
+retornos false, ACL, namespace compartido, tres estructuras, esquemas y mediana.
+`php scripts/sync-app.php --check` compara componentes y artefacto desplegable.
+
+Ejecutar `php scripts/measure.php 1000 5` con MongoDB y Redis configurados.
 Guardar salida y ambiente en docs/mediciones/; aún no hay resultados reales
 publicados. Probar caída de Redis, caída de MongoDB, desconexión de navegador,
 sincronización y acceso de dos clientes distintos en producción de pruebas.
 No se garantizan transacciones globales entre todas las colecciones ni
 paginación para grandes volúmenes. Esas limitaciones deben medirse y registrarse.
+
+El workflow PHP QA levanta servicios efímeros para `tests/services-real.php`:
+activa validadores, verifica rechazo MongoDB, CRUD sintético, tipos/TTL Redis,
+tres operaciones medidas y explain. Exige OPENDESK_TEST_DATABASE=yes y una
+base aislada; no se ejecuta sobre producción. Una definición de workflow no
+acredita éxito: consultar su resultado y artifact antes de marcar evidencia.

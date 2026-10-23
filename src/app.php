@@ -64,11 +64,11 @@ function connectionConfig(): array {
     }
     $database=$database?:'grupo3_db';
     if(!preg_match('/^[a-zA-Z0-9_\-]+$/',$database)) throw new RuntimeException('Base inválida.');
-    return $cfg=['profile'=>$profile,'uri'=>$uri,'database'=>$database,'namespace'=>'odac:'.substr(hash('sha256',$profile.'|'.$uri.'|'.$database),0,16)];
+    return $cfg=['profile'=>$profile,'uri'=>$uri,'database'=>$database,'namespace'=>redisNamespace($profile.'|'.$uri.'|'.$database),'storageKey'=>'odac:'.substr(hash('sha256',$profile.'|'.$uri.'|'.$database),0,16)];
 }
 function appProfile(): string { return setting('OPENDESK_PROFILE',$GLOBALS['APP_CONFIG']['profile']); }
 function storageKey(): string {
-    try{return connectionConfig()['namespace'];}catch(Throwable $e){return 'odac:'.appProfile();}
+    try{return connectionConfig()['storageKey'];}catch(Throwable $e){return 'odac:'.appProfile();}
 }
 function accessHash(): string {
     return setting('APP_PASSWORD_HASH',$GLOBALS['APP_CONFIG']['accessHash']);
@@ -80,6 +80,7 @@ self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(u.origin!==location.origin||![BASE,BASE+'index.php'].includes(u.pathname)||u.search!==''||e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy))}return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match(BASE+'index.php'))))});
 SW_CODE;
 exit;}
+// BEGIN COMPONENT runtime
 // HTTP mínimo en PHP. No necesita Slim ni Composer.
 final class Response {
     public string $body='';public int $status=200;public array $headers=[];
@@ -140,6 +141,8 @@ final class Collection {
     public function countDocuments(array $filter):int{$c=$this->manager->executeCommand($this->db,new MongoDB\Driver\Command(['aggregate'=>$this->name,'pipeline'=>[['$match'=>(object)$filter],['$count'=>'total']],'cursor'=>(object)[]]));$c->setTypeMap(['root'=>'array','document'=>'array','array'=>'array']);return (int)($c->toArray()[0]['total']??0);}
     public function createIndex(array $keys,array $options=[]):void{$index=['key'=>$keys,'name'=>implode('_',array_map(fn($k,$v)=>$k.'_'.$v,array_keys($keys),array_values($keys)))]+$options;$this->manager->executeCommand($this->db,new MongoDB\Driver\Command(['createIndexes'=>$this->name,'indexes'=>[$index]]));}
 }
+// END COMPONENT runtime
+// BEGIN COMPONENT domain
 const SLA_HOURS = ['Alta'=>4, 'Media'=>24, 'Baja'=>72];
 const STATUSES = ['Nuevo', 'En atención', 'Esperando cliente', 'Resuelto'];
 function cleanText(mixed $value, string $name, int $max = 200, bool $required = true): string {
@@ -166,20 +169,143 @@ function reportData(array $tickets): array {
     $responses = array_values(array_filter($tickets, fn($t)=>isset($t['firstResponseAt'])));
     return ['total'=>count($tickets), 'open'=>count($tickets)-count($resolved), 'resolved'=>count($resolved), 'compliance'=>count($resolved) ? round(100*$ok/count($resolved),1) : null, 'averageResponseMinutes'=>count($responses) ? round(array_sum(array_map(fn($t)=>($t['firstResponseAt']-$t['createdAt'])/60,$responses))/count($responses),1) : null, 'overdue'=>count(array_filter($tickets,fn($t)=>$t['status']!=='Resuelto' && $t['dueAt']<time()))];
 }
+// END COMPONENT domain
+// BEGIN COMPONENT integration
+function redisNamespace(string $identity):string {
+    $prefix=setting('REDIS_PREFIX','grupo3:opendesk:');
+    if(!preg_match('/^grupo3:[a-zA-Z0-9:_-]+:$/D',$prefix))throw new InvalidArgumentException('REDIS_PREFIX debe empezar con grupo3: y terminar con dos puntos.');
+    return $prefix.substr(hash('sha256',$identity),0,16);
+}
+
+// El factory opcional permite probar errores de conexión sin servicios reales.
+function openRedis(?callable $factory=null):?object {
+    try {
+        if(!$factory&&!extension_loaded('redis'))return null;
+        $r=$factory?$factory():new Redis();
+        $port=filter_var(setting('REDIS_PORT','6379'),FILTER_VALIDATE_INT,['options'=>['min_range'=>1,'max_range'=>65535]]);
+        $database=filter_var(setting('REDIS_DATABASE','0'),FILTER_VALIDATE_INT,['options'=>['min_range'=>0]]);
+        if($port===false||$database===false)return null;
+        if(!$r->connect(setting('REDIS_HOST','127.0.0.1'),$port,1.0))return null;
+        $password=setting('REDIS_PASSWORD');$username=setting('REDIS_USERNAME');
+        if($username!==''&&$password==='')return null;
+        if($password!==''&&!$r->auth($username!==''?[$username,$password]:$password))return null;
+        if(!$r->select($database))return null;
+        if(defined('Redis::OPT_READ_TIMEOUT'))$r->setOption(Redis::OPT_READ_TIMEOUT,1.0);
+        $pong=$r->ping();
+        return in_array($pong,[true,'PONG','+PONG'],true)?$r:null;
+    } catch(Throwable $e){return null;}
+}
+
+function writeQueueCache(object $r,string $key,array $items):void {
+    $r->setex($key,15,json_encode($items,JSON_THROW_ON_ERROR));
+    $r->del($key.':order');
+    foreach($items as $t)$r->zAdd($key.':order',queueScore($t),$t['id']);
+    if($items)$r->expire($key.':order',15);
+    // Hash: metadatos de la instantánea que la API entrega junto con la cola.
+    $r->hMSet($key.':meta',['count'=>(string)count($items),'builtAt'=>(string)time()]);
+    $r->expire($key.':meta',15);
+}
+
+function sampleMedian(array $samples):float {
+    if(!$samples)throw new InvalidArgumentException('Se requieren muestras.');
+    foreach($samples as $x)if(!is_int($x)&&!is_float($x))throw new InvalidArgumentException('Muestra no numérica.');
+    sort($samples,SORT_NUMERIC);$n=count($samples);$m=intdiv($n,2);
+    return $n%2?(float)$samples[$m]:($samples[$m-1]+$samples[$m])/2;
+}
+
+function mongoSchemas():array {
+    $text=fn(int $max=160)=>['bsonType'=>'string','maxLength'=>$max];
+    $id=['bsonType'=>'string','minLength'=>1,'maxLength'=>64];
+    $time=['bsonType'=>['int','long'],'minimum'=>0];
+    return [
+        'odac_tickets'=>['bsonType'=>'object','required'=>['id','subject','description','clientId','priority','status','createdAt','dueAt','history'],'properties'=>[
+            'id'=>$id,'subject'=>['bsonType'=>'string','minLength'=>1,'maxLength'=>160],
+            'description'=>['bsonType'=>'string','minLength'=>1,'maxLength'=>4000],
+            'clientId'=>$id,'productId'=>$text(64),'assigneeId'=>$text(64),'createdBy'=>$text(64),
+            'priority'=>['enum'=>['Alta','Media','Baja']],'status'=>['enum'=>STATUSES],
+            'category'=>['enum'=>['Consulta','Reclamo','Devolución','Garantía','Problema con pedido']],
+            'createdAt'=>$time,'dueAt'=>$time,'firstResponseAt'=>$time,'resolvedAt'=>$time,
+            'history'=>['bsonType'=>'array','items'=>['bsonType'=>'object','required'=>['date','text'],'properties'=>['date'=>$time,'text'=>$text(2400)]]],
+        ]],
+        'odac_users'=>['bsonType'=>'object','required'=>['id','name','email','role','active','clientId','passwordHash','version','mustChangePassword'],'properties'=>[
+            'id'=>$id,'name'=>$text(100),'email'=>$text(160),'clientId'=>$id,'passwordHash'=>['bsonType'=>'string','minLength'=>20],
+            'role'=>['enum'=>USER_ROLES],'active'=>['bsonType'=>'bool'],'mustChangePassword'=>['bsonType'=>'bool'],
+            'version'=>['bsonType'=>['int','long'],'minimum'=>1],
+        ]],
+        'odac_clients'=>['bsonType'=>'object','required'=>['id','name','email','phone','company'],'properties'=>[
+            'id'=>$id,'name'=>$text(100),'email'=>$text(160),'phone'=>$text(40),'company'=>$text(120),
+        ]],
+        'odac_products'=>['bsonType'=>'object','required'=>['id','name','type','category','reference','status'],'properties'=>[
+            'id'=>$id,'name'=>$text(100),'type'=>['enum'=>['Producto','Servicio']],'category'=>$text(100),'reference'=>$text(100),'status'=>['enum'=>['Disponible','Suspendido','Retirado']],
+        ]],
+    ];
+}
+
+function installMongoSchemas(Database $database):array {
+    $schemas=mongoSchemas();$invalid=[];
+    // Comprobar TODOS antes de modificar validadores. No borrar ni corregir datos reales.
+    foreach($schemas as $name=>$schema){$n=$database->selectCollection($name)->countDocuments(['$nor'=>[['$jsonSchema'=>$schema]]]);if($n)$invalid[$name]=$n;}
+    if($invalid)throw new RuntimeException('Hay documentos incompatibles; revisar antes de activar JSON Schema.');
+    foreach($schemas as $name=>$schema){
+        $options=['validator'=>['$jsonSchema'=>$schema],'validationLevel'=>'strict','validationAction'=>'error'];
+        try{$database->command(['collMod'=>$name]+$options);}catch(Throwable $e){if($e->getCode()!==26)throw $e;$database->command(['create'=>$name]+$options);}
+    }
+    foreach(array_keys($schemas) as $name)$database->selectCollection($name)->createIndex(['id'=>1],['unique'=>true]);
+    $database->odac_users->createIndex(['email'=>1],['unique'=>true]);
+    foreach([['status'=>1,'priority'=>1,'dueAt'=>1],['clientId'=>1,'createdAt'=>-1],['assigneeId'=>1,'status'=>1]] as $keys)$database->odac_tickets->createIndex($keys);
+    return array_keys($schemas);
+}
+
+function serviceDiagnostics():array {
+    $result=['checkedAt'=>gmdate(DATE_ATOM),'mongo'=>false,'redis'=>false,'mongoExtension'=>extension_loaded('mongodb'),'redisExtension'=>extension_loaded('redis')];
+    try{$result['mongo']=(bool)(db()->command(['ping'=>1])->toArray()[0]['ok']??false);}catch(Throwable $e){}
+    $r=redisClient();if(!$r)return $result;
+    $key=connectionConfig()['namespace'].':diagnostic:'.bin2hex(random_bytes(12));
+    try{
+        writeQueueCache($r,$key,[['id'=>'diagnostic','priority'=>'Alta','dueAt'=>time()+60]]);
+        $result['redis']=$r->type($key)===1&&$r->type($key.':order')===4&&$r->type($key.':meta')===5&&$r->ttl($key)>0&&(int)$r->hGet($key.':meta','count')===1;
+        $result['redisStructures']=['string','sorted_set','hash'];
+    }catch(Throwable $e){$result['redis']=false;}
+    finally{try{foreach([$key,$key.':order',$key.':meta'] as $k)$r->del($k);}catch(Throwable $e){}}
+    return $result;
+}
+
+function benchmarkServices(int $count,int $runs):array {
+    if($count<100||$count>100000||$runs<3||$runs>1000)throw new InvalidArgumentException('Volumen 100..100000; ejecuciones 3..1000.');
+    $database=db();$redis=redisClient();if(!$redis)throw new RuntimeException('Redis no disponible.');
+    $run=bin2hex(random_bytes(16));$col=$database->odac_benchmark_tickets;$key=connectionConfig()['namespace'].':benchmark:'.$run;
+    $filter=['run'=>$run,'status'=>'Nuevo'];$opts=['sort'=>['priority'=>1,'dueAt'=>1],'limit'=>100,'projection'=>['_id'=>0]];
+    $mongoRead=fn()=>$col->find($filter,$opts)->toArray();$samples=['mongo_queue'=>[],'redis_queue'=>[],'mongo_aggregation'=>[]];
+    $pipeline=[['$match'=>['run'=>$run]],['$group'=>['_id'=>'$priority','total'=>['$sum'=>1]]],['$sort'=>['_id'=>1]]];
+    try{
+        $col->createIndex(['run'=>1,'status'=>1,'priority'=>1,'dueAt'=>1]);
+        for($base=0;$base<$count;$base+=1000){$batch=[];for($i=$base;$i<min($count,$base+1000);$i++)$batch[]=['run'=>$run,'number'=>$i,'priority'=>$i%3,'status'=>'Nuevo','dueAt'=>time()+$i,'subject'=>'Dato sintético'];$col->insertMany($batch);}
+        $payload=$mongoRead();if(!$redis->setex($key,600,json_encode($payload,JSON_THROW_ON_ERROR)))throw new RuntimeException('No se pudo preparar caché.');
+        // Calentamiento fuera de muestras. Consultas y serialización comparables.
+        $mongoRead();json_decode($redis->get($key),true,512,JSON_THROW_ON_ERROR);
+        for($i=0;$i<$runs;$i++){
+            foreach($i%2?['redis_queue','mongo_queue']:['mongo_queue','redis_queue'] as $op){$t=hrtime(true);if($op==='mongo_queue')$value=$mongoRead();else{$raw=$redis->get($key);if($raw===false)throw new RuntimeException('Caché expirada durante medición.');$value=json_decode($raw,true,512,JSON_THROW_ON_ERROR);}if(count($value)!==count($payload))throw new RuntimeException('Resultados no comparables.');$samples[$op][]=(hrtime(true)-$t)/1e6;}
+            $t=hrtime(true);$summary=$database->command(['aggregate'=>'odac_benchmark_tickets','pipeline'=>$pipeline,'cursor'=>(object)[]])->toArray();
+            $samples['mongo_aggregation'][]=(hrtime(true)-$t)/1e6;
+        }
+        $explain=$database->command(['explain'=>['find'=>'odac_benchmark_tickets','filter'=>$filter,'sort'=>$opts['sort'],'limit'=>100],'verbosity'=>'executionStats'])->toArray()[0];
+        return ['measuredAt'=>gmdate(DATE_ATOM),'php'=>PHP_VERSION,'documents'=>$count,'pageSize'=>100,'runs'=>$runs,'cacheMode'=>'warm','operations'=>array_map(fn($v)=>['samplesMs'=>$v,'medianMs'=>round(sampleMedian($v),4)],$samples),'mongoExplain'=>$explain,'aggregation'=>$summary,'peakPhpMemoryMB'=>round(memory_get_peak_usage(true)/1048576,2)];
+    }finally{try{$col->deleteMany(['run'=>$run]);}finally{$redis->del($key);}}
+}
+// END COMPONENT integration
 function db(): Database {
     static $db;
     $c=connectionConfig();
     return $db ??= new Database(new MongoDB\Driver\Manager($c['uri'], ['serverSelectionTimeoutMS'=>2500]),$c['database']);
 }
-function redisClient(): ?Redis {
-    try { $r=new Redis(); $r->connect(setting('REDIS_HOST','127.0.0.1'), (int)setting('REDIS_PORT','6379'), 0.3); if(setting('REDIS_PASSWORD'))$r->auth(setting('REDIS_PASSWORD')); if(setting('REDIS_DATABASE'))$r->select((int)setting('REDIS_DATABASE'));  $r->setOption(Redis::OPT_READ_TIMEOUT,0.5); return $r; } catch (Throwable $e) { return null; }
-}
+function redisClient(): ?Redis { $r=openRedis();return $r instanceof Redis?$r:null; }
 function jsonResponse(Response $r, mixed $data, int $code=200): Response {
     $r->getBody()->write(json_encode($data,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR));
     return $r->withHeader('Content-Type','application/json')->withHeader('Cache-Control','no-store')->withStatus($code);
 }
 function documents(string $collection): array { return db()->selectCollection($collection)->find([],['projection'=>['_id'=>0]])->toArray(); }
 function invalidate(): void { try { $r=redisClient(); if($r) $r->incr(connectionConfig()['namespace'].':version'); } catch(Throwable $e) {} }
+// BEGIN COMPONENT security
 const USER_ROLES=['cliente','agente','administrador'];
 function userPublic(array $u):array{return array_intersect_key($u,array_flip(['id','name','email','role','active','clientId','mustChangePassword','createdAt']))+['cacheVersion'=>$u['version']??1];}
 function passwordInput(mixed $p):string{if(!is_string($p)||str_contains($p,"\0")||preg_match_all('/./us',$p)<12||strlen($p)>72)throw new InvalidArgumentException('La contraseña debe tener al menos 12 caracteres y como máximo 72 bytes, sin caracteres nulos.');return $p;}
@@ -242,6 +368,8 @@ function bootstrapAdmin(string $email):void{
     db()->odac_settings->updateOne(['id'=>'security'],['$addToSet'=>['adminIds'=>$id]]);audit('administrador_inicial',$id);
     echo "Administrador inicial preparado. Use su correo y la contraseña del archivo privado.\n";
 }
+// END COMPONENT security
+if(defined('OPENDESK_LIBRARY_ONLY')&&OPENDESK_LIBRARY_ONLY)return;
 if(PHP_SAPI==='cli'){
 $option=$argv[1]??'--help';
 try{
@@ -257,6 +385,8 @@ check($r['compliance']===50.0,'SLA resolución');check($r['averageResponseMinute
 echo "OK: categoría, cliente, validación, prioridad, SLA y primera respuesta.\n";
 exit;}
 if($option==='--check'){echo 'PHP '.PHP_VERSION.' · Perfil '.appProfile().PHP_EOL;foreach(['mongodb','redis'] as $e)echo $e.': '.(extension_loaded($e)?phpversion($e):'FALTA').PHP_EOL;exit;}
+if($option==='--diagnose'){$result=serviceDiagnostics();echo json_encode($result,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE).PHP_EOL;exit($result['mongo']&&$result['redis']?0:2);}
+if($option==='--schema'){echo json_encode(['validatedCollections'=>installMongoSchemas(db())],JSON_PRETTY_PRINT).PHP_EOL;exit;}
 if($option==='--seed'){
 $c=connectionConfig();
 $db=new Database(new MongoDB\Driver\Manager($c['uri'],['serverSelectionTimeoutMS'=>5000]),$c['database']);
@@ -278,28 +408,11 @@ foreach($examples as [$id,$subject,$clientId,$productId,$category,$priority,$sta
  if($status==='Resuelto'){$t['resolvedAt']=$created+7200;$t['history'][]=['date'=>$created+7200,'text'=>'Devolución aprobada y cliente informado (ejemplo).'];}
  $db->odac_tickets->updateOne(['id'=>$id],['$setOnInsert'=>$t],['upsert'=>true]);
 }
-try{$r=new Redis();$r->connect(setting('REDIS_HOST','127.0.0.1'),(int)setting('REDIS_PORT','6379'));if(setting('REDIS_PASSWORD'))$r->auth(setting('REDIS_PASSWORD'));if(setting('REDIS_DATABASE'))$r->select((int)setting('REDIS_DATABASE'));$r->incr($c['namespace'].':version');}catch(Throwable $e){}
+invalidate();
 echo "Datos ficticios cargados sin sobrescribir registros existentes.\n";
 exit;}
-if($option==='--benchmark'){array_splice($argv,1,1);
-// Colección aislada: nunca carga ni elimina tickets de la aplicación.
-$c=connectionConfig();
-$count=(int)($argv[1]??100);$samples=(int)($argv[2]??30);
-if(!in_array($count,[100,1000,10000,100000],true)||$samples<10||$samples>1000)die("Uso: php scripts/benchmark.php [100|1000|10000|100000] [10..1000 muestras]\n");
-$db=new Database(new MongoDB\Driver\Manager($c['uri']),$c['database']);
-$col=$db->selectCollection('odac_benchmark_tickets');$run=bin2hex(random_bytes(8));$key=$c['namespace'].':benchmark:'.$run;$r=new Redis();
-$r->connect(setting('REDIS_HOST','localhost'),(int)setting('REDIS_PORT','6379'));if(setting('REDIS_PASSWORD'))$r->auth(setting('REDIS_PASSWORD'));if(setting('REDIS_DATABASE'))$r->select((int)setting('REDIS_DATABASE'));$r->setOption(Redis::OPT_READ_TIMEOUT,5);
-$col->createIndex(['run'=>1,'priority'=>1,'dueAt'=>1]);$start=microtime(true);
-try{
- for($base=0;$base<$count;$base+=1000){$batch=[];for($i=$base;$i<min($base+1000,$count);$i++)$batch[]=['run'=>$run,'number'=>$i,'priority'=>$i%3,'dueAt'=>time()+$i,'subject'=>'Ticket de carga '.$i];$col->insertMany($batch);}
- $sync=microtime(true)-$start;$read=fn()=>iterator_to_array($col->find(['run'=>$run],['sort'=>['priority'=>1,'dueAt'=>1],'limit'=>100,'projection'=>['_id'=>0]]));
- $r->setex($key,600,json_encode($read()));$mongo=[];$redis=[];
- for($i=0;$i<$samples;$i++){$t=hrtime(true);$read();$mongo[]=(hrtime(true)-$t)/1e6;$t=hrtime(true);json_decode($r->get($key),true);$redis[]=(hrtime(true)-$t)/1e6;}
- $p95=function($a){sort($a);return round($a[(int)ceil(count($a)*.95)-1],3);};
- echo json_encode(['tickets'=>$count,'pageSize'=>100,'samples'=>$samples,'mongoP95Ms'=>$p95($mongo),'redisP95Ms'=>$p95($redis),'batchInsertSeconds'=>round($sync,3),'peakPhpMemoryMB'=>round(memory_get_peak_usage(true)/1048576,2),'measuredAt'=>date(DATE_ATOM)],JSON_PRETTY_PRINT)."\n";
-}finally{$col->deleteMany(['run'=>$run]);$r->del($key);}
-exit;}
-echo "OpenDesk · php index.php --init-admin correo | --check | --test | --seed | --benchmark 1000 30\n";exit;
+if($option==='--benchmark'){$result=benchmarkServices((int)($argv[2]??1000),(int)($argv[3]??5));echo json_encode($result,JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;exit;}
+echo "OpenDesk · php index.php --init-admin correo | --check | --diagnose | --schema | --test | --seed | --benchmark 1000 5\n";exit;
 }catch(Throwable $e){fwrite(STDERR,"No se pudo completar. Revise extensiones, conexiones y permisos MongoDB/Redis.\n");exit(1);}}
 if(isset($_GET['api'])){
 if(!is_string($_GET['api'])||strlen($_GET['api'])>256){http_response_code(400);header('Content-Type: application/json');echo '{"error":"Ruta inválida."}';exit;}
@@ -317,6 +430,7 @@ $app->add(function(Request $req,$handler) {
     catch(InvalidArgumentException $e) { return jsonResponse(new Response(),['error'=>$e->getMessage()],422); }
     catch(Throwable $e) { error_log('OpenDesk: '.get_class($e)); return jsonResponse(new Response(),['error'=>'No se pudo completar la operación. Revise MongoDB y reintente.'],503); }
 });
+// BEGIN COMPONENT routes
 $app->add(function($req,$handler){
     $path=$req->getUri()->getPath();$public=in_array($path,['/api/login','/api/register','/api/session','/api/logout'],true);
     if(!in_array($req->getMethod(),['GET','HEAD','OPTIONS'],true)&&!hash_equals($_SESSION['csrf'],$req->getHeaderLine('X-CSRF-Token')))return jsonResponse(new Response(),['error'=>'Sesión vencida. Actualice la página.'],403);
@@ -340,9 +454,9 @@ $app->get('/api/health',function($req,$res){return jsonResponse($res,['mongo'=>t
 $app->get('/api/tickets',fn($req,$res)=>jsonResponse($res,visibleTickets()));
 $app->get('/api/queue',function($req,$res){
     $u=actor();$key=connectionConfig()['namespace'].':queue:'.$u['id'].':'.$u['version'].':';$r=redisClient();
-    try{if($r){$key.=($r->get(connectionConfig()['namespace'].':version')?:'0');$cache=$r->get($key);if($cache!==false)return jsonResponse($res,['items'=>json_decode($cache,true),'source'=>'Redis']);}}catch(Throwable $e){$r=null;}
+    try{if($r){$key.=($r->get(connectionConfig()['namespace'].':version')?:'0');$cache=$r->get($key);if($cache!==false){$items=json_decode($cache,true,512,JSON_THROW_ON_ERROR);if(!is_array($items))throw new RuntimeException('Caché inválida.');return jsonResponse($res,['items'=>$items,'source'=>'Redis','cachedAt'=>(int)$r->hGet($key.':meta','builtAt')]);}}}catch(Throwable $e){$r=null;}
     $items=array_values(array_filter(visibleTickets(),fn($t)=>$t['status']!=='Resuelto'));usort($items,fn($a,$b)=>queueScore($a)<=>queueScore($b));
-    try{if($r){$r->setex($key,15,json_encode($items));$r->del($key.':order');foreach($items as $t)$r->zAdd($key.':order',queueScore($t),$t['id']);if($items)$r->expire($key.':order',15);}}catch(Throwable $e){}
+    try{if($r)writeQueueCache($r,$key,$items);}catch(Throwable $e){}
     return jsonResponse($res,['items'=>$items,'source'=>'MongoDB']);
 });
 $app->get('/api/reports',fn($req,$res)=>isAdmin()?jsonResponse($res,reportData(visibleTickets())):deny($res));
@@ -390,6 +504,7 @@ $app->patch('/api/users/{id}',function($req,$res,$args){
 $app->get('/api/settings',fn($req,$res)=>jsonResponse($res,['hours'=>policy()]));
 $app->post('/api/settings',function($req,$res){if(!isAdmin())return deny($res);$hours=$req->getParsedBody()['hours']??[];foreach(SLA_HOURS as $p=>$default)if(!isset($hours[$p])||!is_int($hours[$p])||$hours[$p]<1||$hours[$p]>720)throw new InvalidArgumentException('Cada SLA debe tener entre 1 y 720 horas.');$hours=array_intersect_key($hours,SLA_HOURS);db()->odac_settings->updateOne(['id'=>'sla'],['$set'=>['hours'=>$hours]],['upsert'=>true]);audit('configurar_sla','sla',$hours);return jsonResponse($res,['ok'=>true]);});
 $app->get('/api/audit',fn($req,$res)=>isAdmin()?jsonResponse($res,db()->odac_audit->find([],['sort'=>['date'=>-1],'limit'=>200,'projection'=>['_id'=>0]])->toArray()):deny($res));
+// END COMPONENT routes
 $app->run();exit;
 }
 header('Cache-Control: no-store');header('X-Content-Type-Options: nosniff');

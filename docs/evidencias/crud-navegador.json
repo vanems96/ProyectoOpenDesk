@@ -1,0 +1,12 @@
+{
+  "flow": "passed",
+  "roles": "passed",
+  "isolation": "passed",
+  "csv": "passed",
+  "reopen": "passed",
+  "delete": "passed",
+  "environment": "isolated CI browser and real MongoDB Redis",
+  "notWebmin": true,
+  "workflow": "https://github.com/vanems96/ProyectoOpenDesk/actions/runs/39901752871",
+  "commit": "7abfceb54e5a6ac84089ad6bc9bbd0006340a6eb"
+}

@@ -22,9 +22,9 @@ $app->get('/api/health',function($req,$res){return jsonResponse($res,['mongo'=>t
 $app->get('/api/tickets',fn($req,$res)=>jsonResponse($res,visibleTickets()));
 $app->get('/api/queue',function($req,$res){
     $u=actor();$key=connectionConfig()['namespace'].':queue:'.$u['id'].':'.$u['version'].':';$r=redisClient();
-    try{if($r){$key.=($r->get(connectionConfig()['namespace'].':version')?:'0');$cache=$r->get($key);if($cache!==false)return jsonResponse($res,['items'=>json_decode($cache,true),'source'=>'Redis']);}}catch(Throwable $e){$r=null;}
+    try{if($r){$key.=($r->get(connectionConfig()['namespace'].':version')?:'0');$cache=$r->get($key);if($cache!==false){$items=json_decode($cache,true,512,JSON_THROW_ON_ERROR);if(!is_array($items))throw new RuntimeException('Caché inválida.');return jsonResponse($res,['items'=>$items,'source'=>'Redis','cachedAt'=>(int)$r->hGet($key.':meta','builtAt')]);}}}catch(Throwable $e){$r=null;}
     $items=array_values(array_filter(visibleTickets(),fn($t)=>$t['status']!=='Resuelto'));usort($items,fn($a,$b)=>queueScore($a)<=>queueScore($b));
-    try{if($r){$r->setex($key,15,json_encode($items));$r->del($key.':order');foreach($items as $t)$r->zAdd($key.':order',queueScore($t),$t['id']);if($items)$r->expire($key.':order',15);}}catch(Throwable $e){}
+    try{if($r)writeQueueCache($r,$key,$items);}catch(Throwable $e){}
     return jsonResponse($res,['items'=>$items,'source'=>'MongoDB']);
 });
 $app->get('/api/reports',fn($req,$res)=>isAdmin()?jsonResponse($res,reportData(visibleTickets())):deny($res));

@@ -12,6 +12,8 @@ ACCESO-PRIVADO.txt
 # Dependencias y archivos generados
 vendor/
 node_modules/
+test-results/
+playwright-report/
 dist/
 outputs/
 work/

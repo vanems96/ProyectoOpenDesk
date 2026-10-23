@@ -3,6 +3,7 @@
 session_start();$_SESSION['csrf']='test-csrf';$_SERVER['REMOTE_ADDR']='qa';
 require __DIR__.'/../src/runtime.php';
 require __DIR__.'/../src/domain.php';
+require __DIR__.'/../src/integration.php';
 class MemoryCollection {
     public array $rows=[];
     function createIndex($a,$b=[]){return null;}
@@ -116,7 +117,7 @@ foreach(['users','audit','reports'] as $path)callApi('GET',$path,[],403);
 callApi('POST','products',$product,403);callApi('POST','clients',$contact,403);callApi('POST','users',['role'=>'administrador'],403);
 callApi('PATCH','tickets/ticket-one-123',['assigneeId'=>$admin['id'],'status'=>'En atención'],403);
 useUser($admin);$_SESSION['startedAt']=time()-28801;callApi('GET','tickets',[],401);
-class FakeRedis {public array $values=[];function get($k){return $this->values[$k]??false;}function setex($k,$ttl,$v){$this->values[$k]=$v;}function del($k){unset($this->values[$k]);}function zAdd($k,$s,$v){}function expire($k,$s){}function incr($k){return $this->values[$k]=($this->values[$k]??0)+1;}}
+class FakeRedis {public array $values=[];function get($k){return $this->values[$k]??false;}function hMSet($k,$v){$this->values[$k]=$v;}function hGet($k,$field){return $this->values[$k][$field]??false;}function setex($k,$ttl,$v){$this->values[$k]=$v;}function del($k){unset($this->values[$k]);}function zAdd($k,$s,$v){}function expire($k,$s){}function incr($k){return $this->values[$k]=($this->values[$k]??0)+1;}}
 $fakeRedis=new FakeRedis();useUser($admin);check(callApi('GET','queue')['source']==='MongoDB','cold queue uses MongoDB');check(callApi('GET','queue')['source']==='Redis','warm queue uses Redis');
 $cu=db()->odac_users->findOne(['id'=>$c2['id']]);useUser($cu);$q=callApi('GET','queue');check($q['source']==='MongoDB','cache isolated by user');foreach($q['items'] as $t)check($t['clientId']===$cu['clientId'],'cached queue respects client scope');
 useUser($admin);$fakeRedis=new class {function get($k){throw new RuntimeException('Redis down');}};check(callApi('GET','queue')['source']==='MongoDB','Redis outage falls back to MongoDB');unset($fakeRedis);
