@@ -52,6 +52,24 @@ jobs:
         run: cp config.example.php "$OPENDESK_PRIVATE_CONFIG"
       - name: MongoDB and Redis integration
         run: php tests/services-real.php > "$RUNNER_TEMP/services-evidence.json"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Browser dependencies
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+      - name: Browser flow with real application
+        run: |
+          php -S 127.0.0.1:8080 > "$RUNNER_TEMP/php-e2e.log" 2>&1 &
+          trap 'kill $!' EXIT
+          npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: test-results/
       - uses: actions/upload-artifact@v4
         if: success()
         with:
