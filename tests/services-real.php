@@ -24,6 +24,15 @@ try{
     try{$bad=new MongoDB\Driver\Manager('mongodb://127.0.0.1:1',['serverSelectionTimeoutMS'=>300,'connectTimeoutMS'=>300]);$bad->executeCommand('opendesk_ci',new MongoDB\Driver\Command(['ping'=>1]));}
     catch(MongoDB\Driver\Exception\Exception $e){$mongoFailure=true;}
     if(!$mongoFailure)throw new RuntimeException('No se reprodujo el fallo de conexión MongoDB.');
+    // Ejecutar el script público dos veces prueba su reproducibilidad e idempotencia.
+    for($run=0;$run<2;$run++){
+        $proc=proc_open([PHP_BINARY,__DIR__.'/../scripts/seed.php'],[1=>['pipe','w'],2=>['pipe','w']],$pipes);
+        if(!is_resource($proc))throw new RuntimeException('No se pudo ejecutar seed.');
+        stream_get_contents($pipes[1]);fclose($pipes[1]);stream_get_contents($pipes[2]);fclose($pipes[2]);
+        if(proc_close($proc)!==0)throw new RuntimeException('Script seed falló.');
+    }
+    $seeded=iterator_to_array(db()->odac_tickets->find(['id'=>['$in'=>['demo-ticket-101','demo-ticket-102','demo-ticket-103','demo-ticket-104']]]));
+    if(count($seeded)!==4)throw new RuntimeException('Seed no es reproducible.');
     $report=benchmarkServices(100,3);foreach($report['operations'] as $op)if(count($op['samplesMs'])!==3||!isset($op['medianMs']))throw new RuntimeException('Medición incompleta.');
     echo json_encode(['status'=>'passed','diagnostic'=>$diagnostic,'failureChecks'=>['redisUnavailable'=>true,'mongoStillAvailable'=>true,'mongoConnectionError'=>true,'versionInvalidation'=>true],'benchmark'=>$report],JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE).PHP_EOL;
 }finally{db()->odac_tickets->deleteOne(['id'=>$id]);foreach([$key,$key.':order',$key.':meta'] as $k)$r->del($k);}
