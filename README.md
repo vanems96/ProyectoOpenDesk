@@ -55,6 +55,8 @@ No se necesita Composer, Slim ni vendor para la aplicación entregada.
 ```bash
 export OPENDESK_PRIVATE_CONFIG=/ruta/privada/config.php
 php index.php --check
+php scripts/diagnose.php
+php scripts/mongo-schema.php
 php index.php --init-admin administrador@example.test
 php index.php --test
 php -S 127.0.0.1:8080
@@ -91,6 +93,12 @@ Se crean ejemplos ficticios con identificadores `demo-`; no se importan datos
 personales reales ni se crean agentes reales. Asignar los tickets a cuentas
 activas desde el administrador. Ver [datos](data/README.md).
 
+También puede ejecutarse `php scripts/seed.php`. JSON Schema se activa
+explícitamente con `php scripts/mongo-schema.php`, después de un respaldo y
+la revisión de compatibilidad; no borra documentos existentes. Si detecta datos
+incompatibles, se detiene. El diagnóstico conecta a ambos motores y verifica
+los tres tipos Redis y sus TTL; no basta con comprobar la extensión PHP.
+
 Flujo: crear cuenta de cliente → registrar consulta → asignar agente → guardar
 En atención → registrar nota de solución → Resuelto → consultar reportes.
 SLA inicial: Alta 4 h, Media 24 h y Baja 72 h continuas. Esperando cliente no
@@ -100,22 +108,38 @@ pausa el plazo; cambios de política afectan tickets nuevos.
 
 ```bash
 php tests/roles.php
+php tests/integration-tools.php
+php scripts/sync-app.php --check
 php index.php --test
-php index.php --benchmark 1000 30
+php scripts/measure.php 1000 5
 ```
 
 Las pruebas de roles usan almacenamiento en memoria y no requieren servicios.
-No sustituyen pruebas contra MongoDB y Redis reales. Benchmark mide inserción,
-P95 de lecturas de 100 registros, memoria y fecha; utiliza colección aislada.
+No sustituyen pruebas contra MongoDB y Redis reales. La medición ejecuta tres
+operaciones (cola MongoDB, lectura equivalente en Redis y agregación MongoDB),
+al menos tres muestras por operación, reporta mediana, memoria, fecha y explain.
+Usa una colección aislada y elimina solo los registros de su ejecución.
 No se publican cifras inventadas: los resultados reales están pendientes.
 Ver [validación](docs/pruebas.md) y [seguridad](SECURITY.md).
+
+Protocolo y tabla: [mediciones S3](docs/mediciones/protocolo.md).
+Pruebas reales y fallos: [validación de servicios](docs/validacion-servicios.md).
+CI incluye un job con MongoDB/Redis efímeros y conserva evidencia como artifact
+solo si pasa. No equivale a medir el servidor Webmin.
+
+Redis compartido: `REDIS_PREFIX=grupo3:opendesk:` por defecto. Todas las claves
+nuevas conservan `grupo3:`. Se usan strings, sorted sets y hashes con TTL;
+la metadata de cola se devuelve como `cachedAt`. No se usan vaciados globales.
+Si hay ACL, configurar `REDIS_USERNAME` y `REDIS_PASSWORD` solo en privado.
 
 ## Organización
 
 `src/`: aplicación y componentes verificables; `docs/`: diseño, modelo y
 seguimientos; `data/`: descripción de datos sintéticos; `scripts/`: utilidades;
 `tests/`: comprobaciones. `src/app.php` es el artefacto completo. Los archivos
-de componentes permiten probar sus reglas y deben mantenerse sincronizados.
+de componentes permiten probar sus reglas. Tras editarlos, ejecutar
+`php scripts/sync-app.php`; CI detecta un artefacto desactualizado. El módulo
+`src/integration.php` contiene diagnósticos, esquemas, caché y mediciones.
 
 ## Equipo y seguimiento
 

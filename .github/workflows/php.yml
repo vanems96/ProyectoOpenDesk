@@ -12,3 +12,48 @@ jobs:
         run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
       - name: Role and business tests
         run: php tests/roles.php
+      - name: Integration tool tests
+        run: php tests/integration-tools.php
+      - name: Deployable artifact synchronization
+        run: php scripts/sync-app.php --check
+  services:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval 10s --health-timeout 5s --health-retries 12
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 12
+    env:
+      OPENDESK_PRIVATE_CONFIG: ${{ runner.temp }}/opendesk-config.php
+      MONGODB_URI: mongodb://127.0.0.1:27017
+      MONGODB_DATABASE: opendesk_ci
+      OPENDESK_PROFILE: local
+      OPENDESK_TEST_DATABASE: 'yes'
+      REDIS_PREFIX: 'grupo3:opendesk:ci:'
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: '6379'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mongodb, redis
+      - name: Isolated private test config
+        run: cp config.example.php "$OPENDESK_PRIVATE_CONFIG"
+      - name: MongoDB and Redis integration
+        run: php tests/services-real.php > "$RUNNER_TEMP/services-evidence.json"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: services-evidence
+          path: ${{ runner.temp }}/services-evidence.json
