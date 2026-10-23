@@ -158,3 +158,11 @@ Pendientes: comprobar Redis en Webmin, medir con servicios reales, instalación
 desde cero por otro integrante, evidencias, Issues asignados y release.
 La entrega final del curso apunta a `v1.0.0`; esta preparación no afirma
 que todos sus requisitos estén completados.
+
+### Pruebas de navegador
+
+`npm ci` y `npx playwright install chromium` preparan las pruebas opcionales de
+Chromium. `npm run test:e2e` requiere PHP en puerto 8080, MongoDB y Redis y
+`OPENDESK_TEST_DATABASE=yes` en una base aislada. Nunca ejecutarlas contra la
+base de producción: generan cuentas y eliminan su ticket sintético. GitHub
+Actions prepara el entorno y publica evidencia del flujo y CRUD.
