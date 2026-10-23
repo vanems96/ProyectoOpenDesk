@@ -119,7 +119,9 @@ No sustituyen pruebas contra MongoDB y Redis reales. La medición ejecuta tres
 operaciones (cola MongoDB, lectura equivalente en Redis y agregación MongoDB),
 al menos tres muestras por operación, reporta mediana, memoria, fecha y explain.
 Usa una colección aislada y elimina solo los registros de su ejecución.
-No se publican cifras inventadas: los resultados reales están pendientes.
+La [primera medición real en CI](docs/mediciones/ci-2026-10-22.md) contiene
+las muestras, medianas y plan observado. Los resultados de Webmin siguen
+pendientes; no se extrapolan las cifras del runner a producción.
 Ver [validación](docs/pruebas.md) y [seguridad](SECURITY.md).
 
 Protocolo y tabla: [mediciones S3](docs/mediciones/protocolo.md).

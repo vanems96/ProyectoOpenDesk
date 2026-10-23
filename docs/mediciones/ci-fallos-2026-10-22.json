@@ -1,0 +1,261 @@
+{
+  "status": "passed",
+  "diagnostic": {
+    "checkedAt": "2026-10-23T04:09:48+00:00",
+    "mongo": true,
+    "redis": true,
+    "mongoExtension": true,
+    "redisExtension": true,
+    "redisStructures": [
+      "string",
+      "sorted_set",
+      "hash"
+    ]
+  },
+  "failureChecks": {
+    "redisUnavailable": true,
+    "mongoStillAvailable": true,
+    "mongoConnectionError": true,
+    "versionInvalidation": true
+  },
+  "benchmark": {
+    "measuredAt": "2026-10-23T04:09:48+00:00",
+    "php": "8.3.36",
+    "documents": 100,
+    "pageSize": 100,
+    "runs": 3,
+    "cacheMode": "warm",
+    "operations": {
+      "mongo_queue": {
+        "samplesMs": [
+          0.639286,
+          0.63106,
+          0.614609
+        ],
+        "medianMs": 0.6311
+      },
+      "redis_queue": {
+        "samplesMs": [
+          0.249076,
+          0.259926,
+          0.239207
+        ],
+        "medianMs": 0.2491
+      },
+      "mongo_aggregation": {
+        "samplesMs": [
+          0.597407,
+          0.532966,
+          0.513921
+        ],
+        "medianMs": 0.533
+      }
+    },
+    "mongoExplain": {
+      "explainVersion": "1",
+      "queryPlanner": {
+        "namespace": "opendesk_ci.odac_benchmark_tickets",
+        "indexFilterSet": false,
+        "parsedQuery": {
+          "$and": [
+            {
+              "run": {
+                "$eq": "9a671ad53b1f3b114b1a8edd4d730ce8"
+              }
+            },
+            {
+              "status": {
+                "$eq": "Nuevo"
+              }
+            }
+          ]
+        },
+        "queryHash": "6F6B6F1C",
+        "planCacheKey": "881B70A9",
+        "optimizationTimeMillis": 0,
+        "maxIndexedOrSolutionsReached": false,
+        "maxIndexedAndSolutionsReached": false,
+        "maxScansToExplodeReached": false,
+        "winningPlan": {
+          "stage": "LIMIT",
+          "limitAmount": 100,
+          "inputStage": {
+            "stage": "FETCH",
+            "inputStage": {
+              "stage": "IXSCAN",
+              "keyPattern": {
+                "run": 1,
+                "status": 1,
+                "priority": 1,
+                "dueAt": 1
+              },
+              "indexName": "run_1_status_1_priority_1_dueAt_1",
+              "isMultiKey": false,
+              "multiKeyPaths": {
+                "run": [],
+                "status": [],
+                "priority": [],
+                "dueAt": []
+              },
+              "isUnique": false,
+              "isSparse": false,
+              "isPartial": false,
+              "indexVersion": 2,
+              "direction": "forward",
+              "indexBounds": {
+                "run": [
+                  "[\"9a671ad53b1f3b114b1a8edd4d730ce8\", \"9a671ad53b1f3b114b1a8edd4d730ce8\"]"
+                ],
+                "status": [
+                  "[\"Nuevo\", \"Nuevo\"]"
+                ],
+                "priority": [
+                  "[MinKey, MaxKey]"
+                ],
+                "dueAt": [
+                  "[MinKey, MaxKey]"
+                ]
+              }
+            }
+          }
+        },
+        "rejectedPlans": []
+      },
+      "executionStats": {
+        "executionSuccess": true,
+        "nReturned": 100,
+        "executionTimeMillis": 0,
+        "totalKeysExamined": 100,
+        "totalDocsExamined": 100,
+        "executionStages": {
+          "stage": "LIMIT",
+          "nReturned": 100,
+          "executionTimeMillisEstimate": 0,
+          "works": 101,
+          "advanced": 100,
+          "needTime": 0,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "limitAmount": 100,
+          "inputStage": {
+            "stage": "FETCH",
+            "nReturned": 100,
+            "executionTimeMillisEstimate": 0,
+            "works": 100,
+            "advanced": 100,
+            "needTime": 0,
+            "needYield": 0,
+            "saveState": 0,
+            "restoreState": 0,
+            "isEOF": 0,
+            "docsExamined": 100,
+            "alreadyHasObj": 0,
+            "inputStage": {
+              "stage": "IXSCAN",
+              "nReturned": 100,
+              "executionTimeMillisEstimate": 0,
+              "works": 100,
+              "advanced": 100,
+              "needTime": 0,
+              "needYield": 0,
+              "saveState": 0,
+              "restoreState": 0,
+              "isEOF": 0,
+              "keyPattern": {
+                "run": 1,
+                "status": 1,
+                "priority": 1,
+                "dueAt": 1
+              },
+              "indexName": "run_1_status_1_priority_1_dueAt_1",
+              "isMultiKey": false,
+              "multiKeyPaths": {
+                "run": [],
+                "status": [],
+                "priority": [],
+                "dueAt": []
+              },
+              "isUnique": false,
+              "isSparse": false,
+              "isPartial": false,
+              "indexVersion": 2,
+              "direction": "forward",
+              "indexBounds": {
+                "run": [
+                  "[\"9a671ad53b1f3b114b1a8edd4d730ce8\", \"9a671ad53b1f3b114b1a8edd4d730ce8\"]"
+                ],
+                "status": [
+                  "[\"Nuevo\", \"Nuevo\"]"
+                ],
+                "priority": [
+                  "[MinKey, MaxKey]"
+                ],
+                "dueAt": [
+                  "[MinKey, MaxKey]"
+                ]
+              },
+              "keysExamined": 100,
+              "seeks": 1,
+              "dupsTested": 0,
+              "dupsDropped": 0
+            }
+          }
+        }
+      },
+      "command": {
+        "find": "odac_benchmark_tickets",
+        "filter": {
+          "run": "9a671ad53b1f3b114b1a8edd4d730ce8",
+          "status": "Nuevo"
+        },
+        "sort": {
+          "priority": 1,
+          "dueAt": 1
+        },
+        "limit": 100,
+        "$db": "opendesk_ci"
+      },
+      "serverInfo": {
+        "host": "d8cbd5530787",
+        "port": 27017,
+        "version": "7.0.45",
+        "gitVersion": "a52313e13ab55c9bddf7c3ff91dab286fa381796"
+      },
+      "serverParameters": {
+        "internalQueryFacetBufferSizeBytes": 104857600,
+        "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+        "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+        "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+        "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+        "internalQueryProhibitBlockingMergeOnMongoS": 0,
+        "internalQueryMaxAddToSetBytes": 104857600,
+        "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+        "internalQueryFrameworkControl": "forceClassicEngine"
+      },
+      "ok": 1
+    },
+    "aggregation": [
+      {
+        "_id": 0,
+        "total": 34
+      },
+      {
+        "_id": 1,
+        "total": 33
+      },
+      {
+        "_id": 2,
+        "total": 33
+      }
+    ],
+    "peakPhpMemoryMB": 2
+  },
+  "provenance": {
+    "environment": "GitHub Actions Ubuntu MongoDB 7.0 Redis 7 containers",
+    "workflow": "https://github.com/vanems96/ProyectoOpenDesk/actions/runs/39898776168",
+    "commit": "cbbb098477092383f442e28e3677109707f6538e",
+    "notProduction": true
+  }
+}
