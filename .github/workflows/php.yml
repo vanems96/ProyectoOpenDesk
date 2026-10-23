@@ -34,7 +34,7 @@ jobs:
           --health-cmd "redis-cli ping"
           --health-interval 5s --health-timeout 3s --health-retries 12
     env:
-      OPENDESK_PRIVATE_CONFIG: ${{ runner.temp }}/opendesk-config.php
+      OPENDESK_PRIVATE_CONFIG: /tmp/opendesk-ci-config.php
       MONGODB_URI: mongodb://127.0.0.1:27017
       MONGODB_DATABASE: opendesk_ci
       OPENDESK_PROFILE: local
