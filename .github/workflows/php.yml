@@ -52,6 +52,8 @@ jobs:
         run: cp config.example.php "$OPENDESK_PRIVATE_CONFIG"
       - name: MongoDB and Redis integration
         run: php tests/services-real.php > "$RUNNER_TEMP/services-evidence.json"
+      - name: Redis without PHP extension
+        run: REDIS_CLIENT=socket php tests/services-real.php > "$RUNNER_TEMP/socket-evidence.json"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

@@ -1,6 +1,57 @@
 <?php
 declare(strict_types=1);
 
+// Cliente RESP2 limitado a las operaciones de OpenDesk; no requiere extensión.
+// Referencia: https://redis.io/docs/latest/develop/reference/protocol-spec/
+final class OpenDeskRedisSocket {
+    private $socket=null;
+    public function __destruct(){if(is_resource($this->socket))fclose($this->socket);}
+    public function connect(string $host,int $port,float $timeout):bool {
+        if(!preg_match('/^(?:tls:\/\/)?[a-zA-Z0-9.\[\]:_-]+$/D',$host))throw new RuntimeException('Host Redis inválido.');
+        $address=(str_starts_with($host,'tls://')?'':'tcp://').$host.':'.$port;
+        $this->socket=@stream_socket_client($address,$code,$error,$timeout,STREAM_CLIENT_CONNECT);
+        if(!is_resource($this->socket))return false;
+        stream_set_timeout($this->socket,1);return true;
+    }
+    private function exact(int $length):string {
+        $data='';while(strlen($data)<$length){$chunk=fread($this->socket,$length-strlen($data));if($chunk===false||$chunk==='')throw new RuntimeException('Redis lectura incompleta.');$data.=$chunk;}return $data;
+    }
+    private function reply(int $depth=0):mixed {
+        if($depth>16)throw new RuntimeException('Redis respuesta demasiado anidada.');
+        $line=fgets($this->socket,65536);if($line===false||!str_ends_with($line,"\r\n"))throw new RuntimeException('Redis sin respuesta completa.');
+        $type=$line[0];$value=substr($line,1,-2);
+        if($type==='+')return $value;
+        if($type==='-')throw new RuntimeException('Redis rechazó la operación.');
+        if(!preg_match('/^-?\d+$/D',$value))throw new RuntimeException('Redis longitud inválida.');
+        $n=(int)$value;if($type===':')return $n;
+        if($n===-1)return false;
+        if($n<0||$n>8388608)throw new RuntimeException('Redis respuesta fuera de límite.');
+        if($type==='$'){$data=$this->exact($n);if($this->exact(2)!=="\r\n")throw new RuntimeException('Redis terminador inválido.');return $data;}
+        if($type==='*'){$values=[];if($n>10000)throw new RuntimeException('Redis demasiados elementos.');for($i=0;$i<$n;$i++)$values[]=$this->reply($depth+1);return $values;}
+        throw new RuntimeException('Redis protocolo inesperado.');
+    }
+    private function command(array $args):mixed {
+        if(!is_resource($this->socket))throw new RuntimeException('Redis desconectado.');
+        $data='*'.count($args)."\r\n";foreach($args as $arg){$arg=(string)$arg;$data.='$'.strlen($arg)."\r\n".$arg."\r\n";}
+        $offset=0;while($offset<strlen($data)){$n=fwrite($this->socket,substr($data,$offset));if($n===false||$n===0)throw new RuntimeException('Redis escritura incompleta.');$offset+=$n;}
+        return $this->reply();
+    }
+    public function auth(string|array $credentials):bool{return $this->command(array_merge(['AUTH'],(array)$credentials))==='OK';}
+    public function select(int $database):bool{return $this->command(['SELECT',$database])==='OK';}
+    public function setOption(int $option,mixed $value):bool{return true;}
+    public function ping():string{return $this->command(['PING']);}
+    public function get(string $key):string|false{return $this->command(['GET',$key]);}
+    public function setex(string $key,int $ttl,string $value):bool{return $this->command(['SETEX',$key,$ttl,$value])==='OK';}
+    public function del(string $key):int{return $this->command(['DEL',$key]);}
+    public function incr(string $key):int{return $this->command(['INCR',$key]);}
+    public function expire(string $key,int $ttl):bool{return (bool)$this->command(['EXPIRE',$key,$ttl]);}
+    public function ttl(string $key):int{return $this->command(['TTL',$key]);}
+    public function zAdd(string $key,int|float $score,string $member):int{return $this->command(['ZADD',$key,$score,$member]);}
+    public function hMSet(string $key,array $values):bool{$args=['HMSET',$key];foreach($values as $field=>$value){$args[]=$field;$args[]=$value;}return $this->command($args)==='OK';}
+    public function hGet(string $key,string $field):string|false{return $this->command(['HGET',$key,$field]);}
+    public function type(string $key):int{return ['none'=>0,'string'=>1,'set'=>2,'list'=>3,'zset'=>4,'hash'=>5][$this->command(['TYPE',$key])]??0;}
+}
+
 function redisNamespace(string $identity):string {
     $prefix=setting('REDIS_PREFIX','grupo3:opendesk:');
     if(!preg_match('/^grupo3:[a-zA-Z0-9:_-]+:$/D',$prefix))throw new InvalidArgumentException('REDIS_PREFIX debe empezar con grupo3: y terminar con dos puntos.');
@@ -10,8 +61,10 @@ function redisNamespace(string $identity):string {
 // El factory opcional permite probar errores de conexión sin servicios reales.
 function openRedis(?callable $factory=null):?object {
     try {
-        if(!$factory&&!extension_loaded('redis'))return null;
-        $r=$factory?$factory():new Redis();
+        $mode=setting('REDIS_CLIENT','auto');
+        if(!in_array($mode,['auto','extension','socket'],true))return null;
+        if(!$factory&&$mode==='extension'&&!extension_loaded('redis'))return null;
+        $r=$factory?$factory():($mode!=='socket'&&extension_loaded('redis')?new Redis():new OpenDeskRedisSocket());
         $port=filter_var(setting('REDIS_PORT','6379'),FILTER_VALIDATE_INT,['options'=>['min_range'=>1,'max_range'=>65535]]);
         $database=filter_var(setting('REDIS_DATABASE','0'),FILTER_VALIDATE_INT,['options'=>['min_range'=>0]]);
         if($port===false||$database===false)return null;
@@ -89,7 +142,7 @@ function installMongoSchemas(Database $database):array {
 function serviceDiagnostics():array {
     $result=['checkedAt'=>gmdate(DATE_ATOM),'mongo'=>false,'redis'=>false,'mongoExtension'=>extension_loaded('mongodb'),'redisExtension'=>extension_loaded('redis')];
     try{$result['mongo']=(bool)(db()->command(['ping'=>1])->toArray()[0]['ok']??false);}catch(Throwable $e){}
-    $r=redisClient();if(!$r)return $result;
+    $r=redisClient();$result['redisClient']=$r instanceof OpenDeskRedisSocket?'php_socket':($r?'php_extension':'unavailable');if(!$r)return $result;
     $key=connectionConfig()['namespace'].':diagnostic:'.bin2hex(random_bytes(12));
     try{
         writeQueueCache($r,$key,[['id'=>'diagnostic','priority'=>'Alta','dueAt'=>time()+60]]);
