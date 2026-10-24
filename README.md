@@ -166,3 +166,14 @@ Chromium. `npm run test:e2e` requiere PHP en puerto 8080, MongoDB y Redis y
 `OPENDESK_TEST_DATABASE=yes` en una base aislada. Nunca ejecutarlas contra la
 base de producción: generan cuentas y eliminan su ticket sintético. GitHub
 Actions prepara el entorno y publica evidencia del flujo y CRUD.
+
+### Redis sin extensión PHP
+
+OpenDesk usa la extensión Redis cuando está disponible y, en su ausencia,
+un cliente PHP por sockets RESP2 que implementa únicamente sus operaciones.
+No requiere sudo ni Composer. `REDIS_CLIENT=socket` fuerza ese cliente para
+pruebas; `REDIS_CLIENT=extension` exige la extensión y `auto` selecciona.
+La conexión conserva autenticación, selección de base, PING, tiempo de espera,
+prefijo grupo3: y contingencia MongoDB. `--diagnose` identifica el cliente.
+Referencia: https://redis.io/docs/latest/develop/reference/protocol-spec/.
+CI ejecuta las pruebas de integración reales también con el cliente socket.
