@@ -51,9 +51,23 @@ final class Collection {
     public function __construct(private MongoDB\Driver\Manager $manager,private string $db,private string $name){}
     public function find(array $filter=[],array $options=[]):MongoDB\Driver\Cursor{$cursor=$this->manager->executeQuery($this->db.'.'.$this->name,new MongoDB\Driver\Query($filter,$options));$cursor->setTypeMap(['root'=>'array','document'=>'array','array'=>'array']);return $cursor;}
     public function findOne(array $filter,array $options=[]):?array{$options['limit']=1;return $this->find($filter,$options)->toArray()[0]??null;}
-    public function insertOne(array $document):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
-    public function insertMany(array $documents):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();foreach($documents as $document)$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
-    public function updateOne(array $filter,array $update,array $options=[]):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->update($filter,$update,['multi'=>false,'upsert'=>(bool)($options['upsert']??false)]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
+    public function insertOne(array $document):MongoDB\Driver\WriteResult{validateCollectionDocument($this->name,$document);$bulk=new MongoDB\Driver\BulkWrite();$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
+    public function insertMany(array $documents):MongoDB\Driver\WriteResult{foreach($documents as $document)validateCollectionDocument($this->name,$document);$bulk=new MongoDB\Driver\BulkWrite();foreach($documents as $document)$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
+    public function updateOne(array $filter,array $update,array $options=[]):MongoDB\Driver\WriteResult{
+        $upsert=(bool)($options['upsert']??false);
+        if(isset(mongoSchemas()[$this->name])){
+            $before=$this->findOne($filter);
+            if($before!==null){
+                validateCollectionDocument($this->name,schemaUpdatedDocument($before,$update,false));
+                // Solo escribir sobre la instantánea validada; no pisar cambios concurrentes.
+                $filter=['$and'=>[$filter,$before]];$upsert=false;
+            }elseif($upsert){
+                $base=[];foreach($filter as $field=>$value)if(!str_starts_with((string)$field,'$')&&!is_array($value))$base[$field]=$value;
+                validateCollectionDocument($this->name,schemaUpdatedDocument($base,$update,true));
+            }
+        }
+        $bulk=new MongoDB\Driver\BulkWrite();$bulk->update($filter,$update,['multi'=>false,'upsert'=>$upsert]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);
+    }
     public function deleteOne(array $filter):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->delete($filter,['limit'=>1]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
     public function deleteMany(array $filter):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->delete($filter,['limit'=>0]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
     public function countDocuments(array $filter):int{$c=$this->manager->executeCommand($this->db,new MongoDB\Driver\Command(['aggregate'=>$this->name,'pipeline'=>[['$match'=>(object)$filter],['$count'=>'total']],'cursor'=>(object)[]]));$c->setTypeMap(['root'=>'array','document'=>'array','array'=>'array']);return (int)($c->toArray()[0]['total']??0);}

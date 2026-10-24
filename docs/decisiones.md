@@ -93,3 +93,13 @@ documentos y metadatos en ubicación privada y se intentó activar los esquemas.
 MongoDB negó collMod. Se conserva validación PHP y evidencia de validadores en CI;
 la activación del servidor se reprograma al administrador sin ampliar permisos.
 Esta limitación se registra explícitamente; no se declara activación exitosa.
+
+## Esquema ejecutado por PHP
+
+Las escrituras de OpenDesk validan los documentos contra mongoSchemas() antes
+ de insertarlos o actualizarlos. Se comprueban campos requeridos, tipos,
+longitudes Unicode, valores permitidos, fechas y elementos del historial.
+Para actualizar se valida el documento resultante y se condiciona la escritura
+a la instantánea leída, evitando sobrescribir cambios concurrentes.
+No requiere collMod. La validación del motor MongoDB sigue siendo una capa
+adicional: PHP no puede proteger escrituras realizadas por otras aplicaciones.

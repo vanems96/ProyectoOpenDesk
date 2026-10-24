@@ -124,6 +124,42 @@ function mongoSchemas():array {
     ];
 }
 
+// Valida el subconjunto JSON Schema utilizado por mongoSchemas(), sin collMod.
+// No sustituye validadores del motor para escrituras hechas fuera de OpenDesk.
+function validateSchemaValue(mixed $value,array $schema,string $path):void {
+    if(isset($schema['enum'])&&!in_array($value,$schema['enum'],true))throw new InvalidArgumentException('Valor no permitido en '.$path.'.');
+    if(isset($schema['bsonType'])){
+        $valid=false;foreach((array)$schema['bsonType'] as $type){$valid=$valid||match($type){
+            'object'=>is_array($value)&&($value===[]||!array_is_list($value)),
+            'array'=>is_array($value)&&array_is_list($value),'string'=>is_string($value),
+            'int','long'=>is_int($value),'bool'=>is_bool($value),default=>false};}
+        if(!$valid)throw new InvalidArgumentException('Tipo inválido en '.$path.'.');
+    }
+    if(is_string($value)){
+        $length=preg_match_all('/./us',$value);if($length===false)throw new InvalidArgumentException('Texto inválido en '.$path.'.');
+        if(isset($schema['minLength'])&&$length<$schema['minLength']||isset($schema['maxLength'])&&$length>$schema['maxLength'])throw new InvalidArgumentException('Longitud inválida en '.$path.'.');
+    }
+    if(isset($schema['minimum'])&&(!is_int($value)||$value<$schema['minimum']))throw new InvalidArgumentException('Valor fuera de rango en '.$path.'.');
+    foreach($schema['required']??[] as $field)if(!is_array($value)||!array_key_exists($field,$value))throw new InvalidArgumentException('Falta '.$path.'.'.$field.'.');
+    foreach($schema['properties']??[] as $field=>$rule)if(is_array($value)&&array_key_exists($field,$value))validateSchemaValue($value[$field],$rule,$path.'.'.$field);
+    if(isset($schema['items'])&&is_array($value))foreach($value as $index=>$item)validateSchemaValue($item,$schema['items'],$path.'['.$index.']');
+}
+function validateCollectionDocument(string $collection,array $document):void {
+    $schema=mongoSchemas()[$collection]??null;if($schema)validateSchemaValue($document,$schema,$collection);
+}
+function schemaUpdatedDocument(array $document,array $update,bool $insert):array {
+    foreach($update as $operator=>$fields){
+        if(!in_array($operator,['$set','$setOnInsert','$inc','$push','$unset'],true)||!is_array($fields))throw new InvalidArgumentException('Actualización no soportada por el esquema PHP.');
+        foreach($fields as $field=>$value){
+            if(!is_string($field)||str_contains($field,'.')||str_starts_with($field,'$'))throw new InvalidArgumentException('Campo de actualización inválido.');
+            if($operator==='$set'||$operator==='$setOnInsert'&&$insert)$document[$field]=$value;
+            elseif($operator==='$unset')unset($document[$field]);
+            elseif($operator==='$inc'){if(!is_int($value)||isset($document[$field])&&!is_int($document[$field]))throw new InvalidArgumentException('Incremento inválido.');$document[$field]=($document[$field]??0)+$value;}
+            elseif($operator==='$push'){if(isset($document[$field])&&(!is_array($document[$field])||!array_is_list($document[$field])))throw new InvalidArgumentException('Lista inválida.');$document[$field][]=$value;}
+        }
+    }return $document;
+}
+
 function installMongoSchemas(Database $database):array {
     $schemas=mongoSchemas();$invalid=[];
     // Comprobar TODOS antes de modificar validadores. No borrar ni corregir datos reales.
