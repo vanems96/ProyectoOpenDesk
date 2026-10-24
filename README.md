@@ -2,7 +2,7 @@
 
 Sistema web open source en PHP para consultas, garantías, entregas, devoluciones y reclamos. Usa MongoDB para persistencia y Redis para caché. Licencia [MIT](LICENSE). Versión candidata [v0.9.0](https://github.com/vanems96/ProyectoOpenDesk/releases/tag/v0.9.0).
 
-[Video pendiente para el cierre](docs/demo/README.md) · [Presentación final borrador](docs/presentacion/OpenDesk_presentacion_S4.pptx) · [Bitácora S4](docs/seguimientos/S4.md)
+[Video no realizado](docs/demo/README.md) · [Presentación final borrador](docs/presentacion/OpenDesk_presentacion_S4.pptx) · [Bitácora S4](docs/seguimientos/S4.md)
 
 ## Problema y usuarios
 
@@ -202,7 +202,7 @@ Las capturas siguientes corresponden a un entorno de prueba aislado con datos si
 ![Departamentos y equipos](docs/img/equipos.png)
 ![Valoración de atención](docs/img/valoracion.png)
 
-El video de tres a cinco minutos queda pendiente por decisión del equipo y se incorporará al terminar los demás entregables. [Guion y reproducción](docs/demo/README.md). [Borrador editable de presentación](docs/presentacion/OpenDesk_presentacion_S4.pptx).
+El video no se realiza en esta preparación por solicitud del equipo. Se conserva como requisito pendiente del docente. [Guion y reproducción](docs/demo/README.md). [Borrador editable de presentación](docs/presentacion/OpenDesk_presentacion_S4.pptx).
 
 ## Pruebas y mediciones
 
@@ -213,7 +213,7 @@ php scripts/sync-app.php --check
 php scripts/measure.php 1000 5
 ```
 
-Las pruebas de roles usan almacenamiento en memoria. La integración real requiere una base aislada y Redis. GitHub Actions comprueba MongoDB/Redis reales, cliente socket, flujo Chromium y una instalación Docker limpia. La grabación solo se ejecuta manualmente al activar su opción. Nunca ejecutar pruebas de borrado o bootstrap contra producción.
+Las pruebas de roles usan almacenamiento en memoria. La integración real requiere una base aislada y Redis. GitHub Actions comprueba MongoDB/Redis reales, cliente socket, flujo Chromium y una instalación Docker limpia. Nunca ejecutar pruebas de borrado o bootstrap contra producción.
 
 [Resultados Webmin con tres operaciones y medianas](docs/mediciones/webmin-2026-10-23.md) · [Medición CI separada](docs/mediciones/ci-2026-10-22.md) · [Pruebas](docs/pruebas.md) · [Seguridad](SECURITY.md).
 
@@ -221,7 +221,7 @@ Las mediciones usan datos sintéticos y no equivalen a carga concurrente ni a ti
 
 ## Estructura y trabajo del equipo
 
-`src/` contiene componentes PHP y el archivo desplegable. `docs/` mantiene arquitectura, evidencias y seguimientos. `data/` describe los datos sintéticos. `scripts/` reúne diagnóstico, carga, esquemas y exportación. `tests/` contiene comprobaciones y grabación de la demo.
+`src/` contiene componentes PHP y el archivo desplegable. `docs/` mantiene arquitectura, evidencias y seguimientos. `data/` describe los datos sintéticos. `scripts/` reúne diagnóstico, carga, esquemas y exportación. `tests/` contiene comprobaciones automatizadas.
 
 Después de editar componentes PHP, ejecutar `php scripts/sync-app.php`. La integración se hace mediante ramas y pull requests. La excepción académica sobre aportes individuales está registrada en [S1](docs/seguimientos/S1.md); no se inventan commits de otros integrantes.
 

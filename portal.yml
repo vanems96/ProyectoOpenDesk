@@ -6,7 +6,7 @@ motores: [Redis, MongoDB]
 lenguaje: PHP
 licencia: MIT
 repositorio: https://github.com/vanems96/ProyectoOpenDesk
-demo_video: "" # Pendiente para el cierre, por solicitud del equipo
+demo_video: "" # No realizado por solicitud del equipo
 demo_url: https://grupo3.crnube.org/Opendesk/
 captura: docs/img/tickets.png
 grupo: 3

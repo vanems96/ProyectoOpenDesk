@@ -62,6 +62,7 @@ test('flujo UI completo, aislamiento, reportes y CRUD con motores reales',async(
     await client.locator('nav [data-view=notifications]').click();await expect(client.locator('#content')).toContainText('Solución sintética verificada.');
     await client.locator('nav [data-view=tickets]').click();await client.locator(`[data-ticket="${id}"]`).click();
     await expect(client.locator('#modal-content')).not.toContainText('NOTA PRIVADA E2E');
+    await client.screenshot({path:'test-results/valoracion.png',fullPage:true});
     await client.locator('#rating-form [name=rating]').selectOption('5');await client.locator('#rating-form [name=comment]').fill('Excelente atención de prueba.');
     await client.locator('#rating-form .primary').click();await expect(client.locator('tbody tr').filter({hasText:subject})).toContainText('Cerrado');
     const rated=await (await api(client,'tickets/'+id)).json();expect(rated.rating).toBe(5);expect(rated.closedAt).toBeGreaterThan(0);
