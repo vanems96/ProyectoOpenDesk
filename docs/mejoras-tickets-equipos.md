@@ -13,7 +13,7 @@
 
 Hay tres roles: cliente, agente y administrador. Supervisor es una responsabilidad del agente de un área, no un cuarto rol. Un agente solo consulta y modifica tickets cuyo `assigneeId` coincide con su cuenta. Haber creado un ticket no concede acceso. El administrador puede gestionar todos. Cada cliente accede a sus propias solicitudes. Los contactos del agente se limitan a los clientes de sus tickets.
 
-El detalle siempre consulta al servidor. La cola Redis revalida cada resultado contra MongoDB; una caché antigua no devuelve un ticket reasignado. La nueva versión del almacenamiento del navegador no recupera vistas antiguas. Sin conexión se pueden registrar solicitudes pendientes, pero no consultar copias de tickets que podrían haber cambiado de responsable.
+El detalle siempre consulta al servidor. La cola Redis revalida cada resultado contra MongoDB; una caché antigua no devuelve un ticket reasignado. El navegador descarta las vistas antiguas al iniciar sesión, conservando las solicitudes pendientes de sincronizar. Sin conexión se pueden registrar solicitudes pendientes, pero no consultar copias de tickets que podrían haber cambiado de responsable.
 
 Las notas internas se filtran en las respuestas del cliente: listado, detalle, cola y avisos. Los cambios se realizan con comparación del historial para detectar ediciones simultáneas. El historial registra actor, fecha, tipo, visibilidad y destinatarios. Reasignar requiere motivo. No se puede desactivar, cambiar de rol o mover de área una cuenta con casos abiertos sin reasignarlos primero.
 

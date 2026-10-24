@@ -100,7 +100,7 @@ incompatibles, se detiene. El diagnóstico conecta a ambos motores y verifica
 los tres tipos Redis y sus TTL; no basta con comprobar la extensión PHP.
 
 Flujo: crear cuenta de cliente → registrar consulta → asignar agente → guardar
-En atención → registrar nota de solución → Resuelto → consultar reportes.
+En proceso → Solución propuesta → confirmación y valoración del cliente → Cerrado → reportes.
 SLA inicial: Alta 4 h, Media 24 h y Baja 72 h continuas. Esperando cliente no
 pausa el plazo; cambios de política afectan tickets nuevos.
 
