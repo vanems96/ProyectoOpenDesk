@@ -78,7 +78,7 @@ $app->patch('/api/tickets/{id}',function($req,$res,$args){
         if($assignmentChanged&&!empty($t['assigneeId'])&&!$reason)throw new InvalidArgumentException('Justifique la reasignación.');
         if($status!==$t['status']&&in_array($status,['Solución propuesta','Resuelto'],true)&&(!$note||$visibility!=='public'))throw new InvalidArgumentException('Escriba una solución pública.');
         if($status==='Resuelto'&&$t['status']!=='Resuelto'&&!$reason)throw new InvalidArgumentException('Justifique el cierre administrativo.');
-        $wait=$b['waitingFor']??($visibility==='internal'?($t['waitingFor']??'agente'):($status==='Solución propuesta'||$status==='Esperando cliente'?'cliente':'agente'));if(!in_array($wait,['cliente','agente'],true))throw new InvalidArgumentException('Turno inválido.');
+        $wait=$b['waitingFor']??($visibility==='internal'?($t['waitingFor']??'agente'):($status==='Solución propuesta'||$status==='Esperando cliente'?'cliente':'agente'));if(in_array($status,['Solución propuesta','Esperando cliente'],true))$wait='cliente';if($status==='Nuevo')$wait='agente';if(!in_array($wait,['cliente','agente'],true))throw new InvalidArgumentException('Turno inválido.');
         if(!$note&&!$assignmentChanged&&$status===$t['status']&&$wait===($t['waitingFor']??'agente'))throw new InvalidArgumentException('No hay cambios.');
         $set+=['status'=>$status,'departmentId'=>$department,'assigneeId'=>$aid,'assignee'=>$a['name']??'','waitingFor'=>$status==='Resuelto'?'ninguno':$wait];
         if(!isset($t['firstResponseAt'])&&$note&&$visibility==='public')$set['firstResponseAt']=time();

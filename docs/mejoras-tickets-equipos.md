@@ -36,7 +36,7 @@ La evaluación se ejecuta al consultar tickets, cola o notificaciones. Para ejec
 ```sh
 php /home/grupo3/public_html/Opendesk/index.php --escalate
 # cron del usuario, cada cinco minutos:
-*/5 * * * * /usr/bin/php /home/grupo3/public_html/Opendesk/index.php --escalate >> /home/grupo3/tmp/opendesk-escalation.log 2>&1
+*/5 * * * * /bin/flock -n /home/grupo3/tmp/opendesk-escalation.lock /home/grupo3/bin/php /home/grupo3/public_html/Opendesk/index.php --escalate >> /home/grupo3/tmp/opendesk-escalation.log 2>&1
 ```
 
 El archivo de log queda fuera de public_html. El script `scripts/escalate.php` ofrece el mismo comando en el repositorio. Configurar cron es un paso de despliegue; que exista el script no demuestra que el trabajo esté programado.
