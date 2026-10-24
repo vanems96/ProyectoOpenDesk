@@ -177,3 +177,7 @@ La conexión conserva autenticación, selección de base, PING, tiempo de espera
 prefijo grupo3: y contingencia MongoDB. `--diagnose` identifica el cliente.
 Referencia: https://redis.io/docs/latest/develop/reference/protocol-spec/.
 CI ejecuta las pruebas de integración reales también con el cliente socket.
+
+## Seguimiento de tickets y equipos
+
+Consulta las [mejoras de tickets, permisos, equipos, escalamiento, avisos y satisfacción](docs/mejoras-tickets-equipos.md), con rutas de las pantallas y ejecución programable.
