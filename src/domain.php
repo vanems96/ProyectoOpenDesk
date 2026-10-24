@@ -24,7 +24,7 @@ function reportData(array $tickets): array {
     $resolved = array_values(array_filter($tickets, fn($t)=>$t['status']==='Resuelto'));
     $ok = count(array_filter($resolved, fn($t)=>$t['resolvedAt'] <= $t['dueAt']));
     $responses = array_values(array_filter($tickets, fn($t)=>isset($t['firstResponseAt'])));
-    return ['total'=>count($tickets), 'open'=>count($tickets)-count($resolved), 'resolved'=>count($resolved), 'compliance'=>count($resolved) ? round(100*$ok/count($resolved),1) : null, 'averageResponseMinutes'=>count($responses) ? round(array_sum(array_map(fn($t)=>($t['firstResponseAt']-$t['createdAt'])/60,$responses))/count($responses),1) : null, 'overdue'=>count(array_filter($tickets,fn($t)=>$t['status']!=='Resuelto' && $t['dueAt']<time()))];
+    return ['total'=>count($tickets), 'open'=>count($tickets)-count($resolved), 'resolved'=>count($resolved), 'compliance'=>count($resolved) ? round(100*$ok/count($resolved),1) : null, 'averageResponseMinutes'=>count($responses) ? round(array_sum(array_map(fn($t)=>($t['firstResponseAt']-$t['createdAt'])/60,$responses))/count($responses),1) : null, 'overdue'=>count(array_filter($tickets,fn($t)=>!in_array($t['status'],['Resuelto','Solución propuesta'],true) && $t['dueAt']<time()))];
 }
 
 const DEPARTMENTS=['ventas'=>'Ventas','garantias'=>'Garantías','entregas'=>'Entregas','reclamos'=>'Reclamos'];

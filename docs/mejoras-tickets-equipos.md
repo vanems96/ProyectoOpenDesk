@@ -29,7 +29,7 @@ El agente propone una solución pública. El cliente confirma el cierre, calific
 
 La propuesta de asignación considera agentes activos del mismo departamento, cuenta todos sus casos sin cerrar (incluidas soluciones pendientes de confirmación) y desempata por identificador. El administrador revisa y guarda; una propuesta no asigna por sí sola.
 
-Regla inicial: avisar y escalar 60 minutos antes del vencimiento, y marcar nuevamente al vencer. Se busca el supervisor activo del área con menor carga; una reasignación al supervisor retira el acceso al empleado anterior. Si ya lo atiende un supervisor del área, se conserva. Si no existe supervisor disponible, el aviso llega a administradores. Los eventos se deduplican por etapa y actualización condicional del ticket. Una solución propuesta detiene el escalamiento del SLA de resolución mientras espera confirmación.
+Regla inicial: avisar y escalar 60 minutos antes del vencimiento, y marcar nuevamente al vencer. Se busca el supervisor activo del área con menor carga; una reasignación al supervisor retira el acceso al empleado anterior. Si ya lo atiende un supervisor del área, se conserva. Si no existe supervisor disponible, el aviso llega a administradores. La derivación al supervisor también genera un aviso de asignación para el cliente. Los eventos se deduplican por etapa y actualización condicional del ticket. Una solución propuesta detiene el escalamiento del SLA de resolución mientras espera confirmación.
 
 La evaluación se ejecuta al consultar tickets, cola o notificaciones. Para ejecutarla sin visitas:
 

@@ -107,8 +107,8 @@ function mongoSchemas():array {
             'clientId'=>$id,'productId'=>$text(64),'assigneeId'=>$text(64),'createdBy'=>$text(64),
             'departmentId'=>['enum'=>array_keys(DEPARTMENTS)],'waitingFor'=>['enum'=>['cliente','agente','ninguno']],'rating'=>['bsonType'=>['int','long'],'minimum'=>1,'maximum'=>5],'ratingComment'=>['bsonType'=>'string','maxLength'=>1000],'priority'=>['enum'=>['Alta','Media','Baja']],'status'=>['enum'=>STATUSES],
             'category'=>['enum'=>['Consulta','Reclamo','Devolución','Garantía','Problema con pedido']],
-            'createdAt'=>$time,'dueAt'=>$time,'firstResponseAt'=>$time,'resolvedAt'=>$time,
-            'history'=>['bsonType'=>'array','items'=>['bsonType'=>'object','required'=>['date','text'],'properties'=>['date'=>$time,'text'=>$text(2400)]]],
+            'createdAt'=>$time,'dueAt'=>$time,'firstResponseAt'=>$time,'resolvedAt'=>$time,'lastActivityAt'=>$time,'closedAt'=>$time,'escalatedAt'=>$time,'slaStage'=>['enum'=>['warning','overdue']],
+            'history'=>['bsonType'=>'array','items'=>['bsonType'=>'object','required'=>['date','text'],'properties'=>['date'=>$time,'text'=>$text(4000),'id'=>$id,'actorId'=>$text(64),'visibility'=>['enum'=>['public','internal']],'kind'=>['enum'=>['respuesta','asignacion','resolucion','cierre','reapertura','escalamiento']],'recipients'=>['bsonType'=>'array','items'=>$id]]]],
         ]],
         'odac_users'=>['bsonType'=>'object','required'=>['id','name','email','role','active','clientId','passwordHash','version','mustChangePassword'],'properties'=>[
             'id'=>$id,'name'=>$text(100),'email'=>$text(160),'clientId'=>$id,'passwordHash'=>['bsonType'=>'string','minLength'=>20],

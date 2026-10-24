@@ -85,11 +85,12 @@ $app->patch('/api/tickets/{id}',function($req,$res,$args){
         if(in_array($status,['Solución propuesta','Resuelto'],true)){$set['resolvedAt']=$t['resolvedAt']??time();$kind='resolucion';}
         if($status==='Resuelto')$set['closedAt']=time();
         if($assignmentChanged){$kind='asignacion';$note=($note?$note.' · ':'').'Responsable: '.($a['name']??'Sin asignar').' · Área: '.DEPARTMENTS[$department].($reason?' · Motivo: '.$reason:'');}
+        if($reason&&!$assignmentChanged)$note.=' · Motivo: '.$reason;
         if($visibility==='internal'&&($status!==$t['status']||$assignmentChanged))throw new InvalidArgumentException('Guarde las notas internas por separado de los cambios de estado o responsable.');
     }
     $next=array_replace($t,$set);$event=workflowEvent($next,$u['name'].': '.($note?:'Actualización').' · '.$next['status'],$kind,$visibility);
     $update=['$set'=>$set,'$push'=>['history'=>$event]];
-    if(isset($set['status'])&&!in_array($set['status'],['Solución propuesta','Resuelto'],true))$update['$unset']=['resolvedAt'=>'','closedAt'=>'','rating'=>'','ratingComment'=>''];
+    if(isset($set['status'])&&!in_array($set['status'],['Solución propuesta','Resuelto'],true))$update['$unset']=['resolvedAt'=>'','closedAt'=>'','rating'=>'','ratingComment'=>'','slaStage'=>'','escalatedAt'=>'','escalationReason'=>''];
     $r=db()->odac_tickets->updateOne(['id'=>$t['id'],'history'=>$t['history']],$update);
     if(!$r->getMatchedCount())return jsonResponse($res,['error'=>'El ticket cambió. Actualice y reintente.'],409);
     invalidate();audit('actualizar_ticket',$t['id'],['kind'=>$kind,'from'=>$t['assigneeId']??'','to'=>$next['assigneeId']??'','visibility'=>$visibility]);return jsonResponse($res,['ok'=>true]);

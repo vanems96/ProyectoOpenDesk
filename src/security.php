@@ -95,7 +95,7 @@ function processEscalations():array{
         if($current&&!empty($current['supervisor'])&&($current['departmentId']??'reclamos')===$department)$candidates=[];
         $reason=$stage==='overdue'?'SLA vencido':'SLA próximo a vencer';
         if($candidates){$a=$candidates[0];$set+=['assigneeId'=>$a['id'],'assignee'=>$a['name'],'escalatedAt'=>time(),'escalationReason'=>$reason];}
-        $next=array_replace($t,$set);$event=workflowEvent($next,$reason.($candidates?' · Derivado al supervisor '.$a['name']:' · Requiere atención del supervisor o administrador'),'escalamiento','internal');
+        $next=array_replace($t,$set);$event=workflowEvent($next,$reason.($candidates?' · Derivado al supervisor '.$a['name']:' · Requiere atención del supervisor o administrador'),'escalamiento',$candidates?'public':'internal');
         $event['actorId']='sistema';$event['recipients']=array_values(array_unique(array_merge($event['recipients'],adminIds())));
         $r=db()->odac_tickets->updateOne(['id'=>$t['id'],'history'=>$t['history']],['$set'=>$set,'$push'=>['history'=>$event]]);
         if($r->getMatchedCount()){$counts['warnings']++;if($candidates)$counts['escalations']++;invalidate();db()->odac_audit->insertOne(['id'=>userId(),'date'=>time(),'actorId'=>'sistema','actorName'=>'Regla automática SLA','action'=>'escalamiento_sla','target'=>$t['id'],'details'=>['stage'=>$stage,'from'=>$t['assigneeId']??'','to'=>$set['assigneeId']??null]]);}
