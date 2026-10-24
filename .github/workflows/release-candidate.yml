@@ -1,0 +1,43 @@
+name: Instalacion limpia S4
+on:
+  push:
+    branches: [main, Joan-seguimiento-4]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  instalacion-limpia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OPENDESK_TEST_DATABASE: 'yes'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalacion siguiendo el README
+        run: |
+          test ! -e .env
+          cp .env.docker.example .env
+          docker compose config --quiet
+          docker compose build app
+          docker compose up -d --wait app mongo redis worker
+          mkdir -p test-results
+          docker compose exec -T app php scripts/diagnose.php > test-results/instalacion-diagnostico.json
+          docker compose exec -T app php scripts/mongo-schema.php
+          docker compose exec -T app php scripts/seed.php
+          docker compose exec -T app php scripts/seed.php
+          docker compose run --rm seed
+          docker compose run --rm seed
+          docker compose exec -T app php index.php --test
+          docker compose exec -T -e OPENDESK_TEST_DATABASE=yes app php tests/services-real.php > test-results/servicios-docker.json
+          docker compose down
+          docker compose up -d --wait app mongo redis worker
+          docker compose exec -T app php scripts/diagnose.php
+      - name: Comprobar primer acceso y persistencia
+        run: python3 tests/docker-install.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seguimiento-4-instalacion
+          path: test-results/
+      - name: Detener entorno sin borrar volumenes
+        if: always()
+        run: docker compose down

@@ -1,56 +1,154 @@
-# ProyectoOpenDesk
+# OpenDesk Atención al Cliente
 
-Sistema web de tickets para **Atención al Cliente**, desarrollado en PHP con
-MongoDB y caché Redis. Licencia [MIT](LICENSE).
+Sistema web open source en PHP para consultas, garantías, entregas, devoluciones y reclamos. Usa MongoDB para persistencia y Redis para caché. Licencia [MIT](LICENSE). Versión candidata [v0.9.0](https://github.com/vanems96/ProyectoOpenDesk/releases/tag/v0.9.0).
+
+[Video no realizado](docs/demo/README.md) · [Presentación final borrador](docs/presentacion/OpenDesk_presentacion_S4.pptx) · [Bitácora S4](docs/seguimientos/S4.md)
 
 ## Problema y usuarios
 
-Una empresa necesita centralizar consultas, reclamos, garantías, devoluciones
-y problemas de pedidos para asignar responsables y conservar el seguimiento.
-Clientes presentan casos; agentes atienden sus solicitudes asignadas;
-administradores gestionan cuentas, catálogo, asignaciones, SLA y reportes.
+Las solicitudes dispersas en mensajes y hojas de cálculo dificultan conservar el historial, asignar responsables y cumplir plazos. OpenDesk reúne los casos en una interfaz con seguimiento y permisos individuales.
 
-## MVP
+- **Cliente:** registra solicitudes, responde, confirma una solución y valora la atención.
+- **Agente:** ve y trabaja únicamente sus tickets asignados, responde y propone soluciones.
+- **Supervisor:** es un agente con esa función activada en un departamento; recibe derivaciones según las reglas de SLA y conserva el acceso limitado a sus casos asignados.
+- **Administrador:** gestiona usuarios, equipos, catálogo, asignaciones, reglas, reportes y auditoría. Puede cerrar con justificación.
 
-Incluye acceso individual, tres roles, creación y seguimiento de tickets,
-clientes, productos y servicios, historial, SLA, CSV, auditoría, datos sintéticos
-y creación de tickets pendientes en el navegador cuando no hay conexión.
-El administrador puede reabrir casos resueltos y restablecer contraseñas.
+El MVP incluye departamentos, sugerencia por menor carga, notas internas, avisos en la aplicación, satisfacción, reapertura, CSV, SLA, auditoría y registro de solicitudes pendientes en IndexedDB. Los estados visibles son Pendiente de atención, En proceso, Solución propuesta y Cerrado. Responsable y turno de respuesta se muestran por separado.
 
-No incluye pagos, inventario, adjuntos, correo SMTP, recuperación por enlace,
-MFA, chat, calendario laboral ni sincronización automática Webmin–Atlas.
+No incluye correo SMTP, SMS, adjuntos, pagos, inventario, recuperación por enlace, MFA ni calendario laboral. Las notificaciones son internas. No se utiliza SQLite.
 
-## Arquitectura
+## Arquitectura y datos
 
-- PHP ejecuta API, permisos, sesiones y reglas de atención.
-- MongoDB guarda cuentas, contactos, catálogo, tickets, historial y auditoría.
-- Redis conserva temporalmente la cola priorizada y contadores de acceso.
-- IndexedDB mantiene vista local y solicitudes pendientes por usuario.
-- MongoDB local y Atlas son **perfiles alternativos**, no dos motores distintos
-  que compartan funciones. No se utiliza SQLite.
+```mermaid
+flowchart LR
+    Cliente[Navegador y permisos por usuario] <--> PHP[PHP API y sesiones]
+    Cliente <--> Pendientes[IndexedDB solicitudes pendientes]
+    PHP <--> Mongo[MongoDB datos e historial]
+    PHP <--> Redis[Redis cola y limites temporales]
+```
 
-Diagrama: [arquitectura](docs/arquitectura/README.md).
-Modelo: [colecciones y claves](docs/modelo-datos.md).
+| Componente | Responsabilidad |
+|---|---|
+| MongoDB | Usuarios, contactos, catálogo, tickets, historial, valoraciones, reglas, auditoría y marcas de lectura |
+| Redis | Cola JSON, orden en sorted set, metadata en hash, invalidación y límites de intentos |
+| PHP | Autenticación, validación, API, autorización y escalamiento |
+| IndexedDB | Solicitudes nuevas pendientes por usuario; no se recuperan vistas antiguas sin autorización actual |
 
-## Requisitos
+MongoDB local y Atlas son perfiles alternativos. No hay replicación automática entre ambos. Si Redis falla, la cola consulta MongoDB; si MongoDB falla, no se simula una persistencia exitosa. La autorización se vuelve a comprobar al leer una cola cacheada.
 
-PHP 8.2 o superior y extensión `mongodb` 1.19+ o 2.x. Para la caché se necesita
-extensión PHP `redis` y un servidor Redis disponible. Si Redis falla, las
-operaciones normales consultan MongoDB. La prueba de rendimiento sí exige Redis.
-Node.js solo es necesario para comprobar sintaxis JavaScript durante desarrollo.
-No se necesita Composer, Slim ni vendor para la aplicación entregada.
+[Arquitectura](docs/arquitectura/README.md) · [Modelo de datos](docs/modelo-datos.md) · [Mapa de claves Redis](docs/redis-claves.md) · [Decisiones](docs/decisiones.md)
 
-## Instalación
+## Instalación desde cero con Docker
 
-1. Clonar el repositorio.
-2. Copiar `config.example.php` a un lugar **fuera de la raíz web** y configurar
-   URI, base, Redis y hash inicial. Nunca subir el archivo privado a Git.
-3. Establecer `OPENDESK_PRIVATE_CONFIG` con la ruta absoluta de ese archivo.
-   En Webmin se usa por defecto `/home/grupo3/.config/opendesk/config.php`.
-4. Preparar `accessHash` con un hash de una contraseña elegida privadamente.
-   `scripts/password-hash.php` lee la contraseña por entrada estándar. Su
-   salida es privada y se guarda en `accessHash` o `APP_PASSWORD_HASH`.
-5. Ejecutar los comandos siguientes; sustituir el correo por uno propio.
+Esta es la ruta recomendada para alguien que no haya configurado el proyecto. Solo requiere **Git, Docker y Docker Compose v2**. En Windows o macOS, iniciar Docker Desktop antes de continuar. En Linux, iniciar el servicio Docker. No hacen falta PHP, Composer ni MongoDB instalados en el equipo.
+
+### 1 Comprobar herramientas y clonar
+
+```bash
+git --version
+docker version
+docker compose version
+git clone https://github.com/vanems96/ProyectoOpenDesk.git
+cd ProyectoOpenDesk
+git checkout v0.9.0
+```
+
+Durante la preparación del release puede probarse la rama indicada en el pull request. La entrega publicada usa el tag anterior, que fija el código.
+
+### 2 Preparar el entorno privado
+
+Linux o macOS:
+
+```bash
+cp .env.docker.example .env
+```
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.docker.example .env
+```
+
+Los valores de la plantilla conectan únicamente los contenedores de demostración. `.env` está excluido de Git y de la imagen. No copiar configuraciones ni credenciales de Webmin. MongoDB y Redis no publican puertos en el equipo; la aplicación se expone solo en `127.0.0.1:8080`.
+
+### 3 Construir e iniciar
+
+```bash
+docker compose config --quiet
+docker compose build app
+docker compose up -d --wait app mongo redis worker
+docker compose exec app php scripts/diagnose.php
+```
+
+Esperar que el diagnóstico muestre `mongo: true`, `redis: true` y las tres estructuras Redis. La primera construcción descarga imágenes y compila la extensión MongoDB. La imagen incluye PHP 8.3 y el cliente Redis socket; no requiere instalar la extensión Redis.
+
+### 4 Esquemas y datos sintéticos
+
+```bash
+docker compose exec app php scripts/mongo-schema.php
+docker compose exec app php scripts/seed.php
+docker compose run --rm seed
+docker compose exec app php index.php --test
+```
+
+La primera carga crea cuatro tickets `demo-ticket-*`, contactos y catálogo ficticios. La carga con **mongosh** añade cuatro tickets `mongosh-demo-ticket-*`, uno por área. Ambas se pueden repetir sin duplicar ni sobrescribir registros. No crean cuentas de empleados ni contienen contraseñas del despliegue.
+
+### 5 Crear el primer administrador
+
+Generar un hash escribiendo una contraseña propia de al menos doce caracteres. No usar las contraseñas públicas de las pruebas. El comando lee una línea por entrada estándar; no se pasa la contraseña como argumento. Si la terminal muestra lo que se escribe, hacerlo en privado y sin grabar la pantalla.
+
+```bash
+docker compose exec app php scripts/password-hash.php
+```
+
+Copiar **solo el hash** que imprime y ejecutar, sustituyendo el marcador y el correo:
+
+```bash
+docker compose exec -e APP_PASSWORD_HASH='<HASH_GENERADO>' app php index.php --init-admin administrador@example.test
+```
+
+Las comillas simples conservan los signos dólar del hash tanto en Bash como en PowerShell. El correo puede ser uno elegido para la prueba. Abrir **http://127.0.0.1:8080/** e ingresar con ese correo y la contraseña original. La aplicación exige cambiarla antes de continuar. No repetir `--init-admin` si existe un administrador; crear las cuentas siguientes desde Usuarios.
+
+### 6 Probar el flujo completo
+
+1. Desde Usuarios, crear un agente, elegir su departamento y, si corresponde, activar Supervisor.
+2. Cerrar sesión y crear una cuenta de cliente desde la pantalla de acceso.
+3. Como cliente, registrar un ticket con departamento y categoría.
+4. Como administrador, abrirlo, revisar la sugerencia, elegir responsable del área y guardar En proceso.
+5. Como agente, cambiar la contraseña temporal, abrir su ticket, guardar una nota interna y proponer una solución pública.
+6. Como cliente, revisar los avisos, confirmar la solución y calificar de uno a cinco.
+7. Como administrador, consultar Reportes y descargar CSV.
+
+El agente no ve tickets ajenos. El cliente no recibe notas internas. Los tickets sin responsable aparecen al administrador y a su cliente, no a otros agentes.
+
+### 7 Detener y volver a iniciar
+
+```bash
+docker compose down
+docker compose up -d --wait app mongo redis worker
+```
+
+El volumen `mongo_data` conserva los datos. No eliminar volúmenes si se desea mantenerlos. Redis es temporal. El worker revisa el SLA cada cinco minutos y también se evalúa al consultar tickets, cola o avisos.
+
+### Errores frecuentes
+
+| Síntoma | Qué revisar |
+|---|---|
+| No se puede conectar al daemon Docker | Iniciar Docker Desktop o el servicio Docker y repetir `docker version` |
+| Falta `.env` | Copiar `.env.docker.example` antes de ejecutar Compose |
+| Puerto 8080 ocupado | Cambiar `APP_PORT` en `.env`, reiniciar y abrir ese puerto |
+| MongoDB tarda en iniciar | Consultar `docker compose logs mongo` y esperar el healthcheck |
+| Configuración privada pendiente | Verificar `OPENDESK_PRIVATE_CONFIG=/opt/opendesk/config.php` en el entorno Docker |
+| Credenciales iniciales incorrectas | Usar la contraseña original que produjo el hash; después del primer acceso usar la contraseña nueva |
+| Ya existe administrador | Entrar con su cuenta; las nuevas cuentas se crean desde Usuarios |
+| Redis no disponible | Consultar `docker compose logs redis`; la aplicación usa MongoDB como contingencia |
+| Un agente no encuentra un ticket | Comprobar que esté activo, sea del área y tenga asignado el caso |
+
+El entorno Docker es para desarrollo y demostración local. Un despliegue público necesita HTTPS, autenticación de motores, copias de respaldo y configuración del servidor. No publicar los puertos de MongoDB ni Redis.
+
+## Instalación nativa y Webmin
+
+Requiere PHP 8.2 o superior con extensión MongoDB 1.19+ o 2.x y un servidor MongoDB. Redis puede usar extensión nativa o cliente socket. No requiere Composer. Copiar `config.example.php` a una ruta privada fuera de la raíz web y establecer `OPENDESK_PRIVATE_CONFIG` con su ruta absoluta.
 
 ```bash
 export OPENDESK_PRIVATE_CONFIG=/ruta/privada/config.php
@@ -58,126 +156,79 @@ php index.php --check
 php scripts/diagnose.php
 php scripts/mongo-schema.php
 php index.php --init-admin administrador@example.test
-php index.php --test
 php -S 127.0.0.1:8080
 ```
 
-En PowerShell, la variable se establece con
-`$env:OPENDESK_PRIVATE_CONFIG='C:/ruta/privada/config.php'`.
-Abrir `http://127.0.0.1:8080/`. Ingresar con el correo inicial y la contraseña
-privada elegida; el sistema exige cambiarla. No repetir `--init-admin` si ya
-existe un administrador: las cuentas siguientes se crean desde Usuarios.
-`.env.example` documenta las variables; **no existe carga automática de .env**.
-En producción utilizar HTTPS y desactivar `display_errors` en PHP del servidor.
+En PowerShell: `$env:OPENDESK_PRIVATE_CONFIG='C:/ruta/privada/config.php'`. El archivo privado configura URI, base, Redis y `accessHash`. Puede generarse el hash con `php scripts/password-hash.php`.
 
-### Despliegue de un solo PHP en Webmin
+En Webmin la ruta privada por defecto es `/home/grupo3/.config/opendesk/config.php`. El comando siguiente exporta la aplicación completa sin secretos:
 
 ```bash
 php scripts/export-webmin.php
 ```
 
-Copiar `dist/index.php` a la carpeta pública del sitio. Este archivo contiene
-la aplicación completa, pero **no las conexiones privadas**. La configuración
-queda fuera de `public_html`. No copiar `.git`, tests, datos, ZIP ni backups
-a la carpeta pública. La exportación no modifica la base ni borra cuentas.
-Para desplegar directamente el código del repositorio, conservar `index.php`
-y la carpeta `src/`; el exportador facilita la instalación de un archivo.
+Copiar solamente `dist/index.php` a la carpeta pública de OpenDesk. Mantener configuración, `.env`, `.git`, backups y herramientas de prueba fuera de `public_html`. La exportación no modifica los datos. Alternativamente, desplegar el archivo raíz `index.php` con `src/`.
 
-## Datos de prueba y uso
+La activación nativa de JSON Schema requiere permisos de MongoDB. En Webmin el usuario no tiene `collMod`: la validación PHP está activa, pero las escrituras externas no quedan protegidas por ella. No ampliar permisos para saltar esta limitación. [Detalle](docs/seguimientos/S3.md).
 
-```bash
-php index.php --seed
-```
+## Variables de entorno
 
-Se crean ejemplos ficticios con identificadores `demo-`; no se importan datos
-personales reales ni se crean agentes reales. Asignar los tickets a cuentas
-activas desde el administrador. Ver [datos](data/README.md).
+`.env.example` documenta la instalación nativa y `.env.docker.example` Docker. PHP **no carga `.env` automáticamente**: Compose lo inyecta, o el usuario debe exportar las variables en el proceso PHP.
 
-También puede ejecutarse `php scripts/seed.php`. JSON Schema se activa
-explícitamente con `php scripts/mongo-schema.php`, después de un respaldo y
-la revisión de compatibilidad; no borra documentos existentes. Si detecta datos
-incompatibles, se detiene. El diagnóstico conecta a ambos motores y verifica
-los tres tipos Redis y sus TTL; no basta con comprobar la extensión PHP.
+| Variable | Función |
+|---|---|
+| `OPENDESK_PRIVATE_CONFIG` | Ruta absoluta del archivo privado, fuera de la raíz web |
+| `OPENDESK_PROFILE` | `local` o `atlas` |
+| `MONGODB_URI` | URI privada del motor elegido |
+| `MONGODB_DATABASE` | Base del entorno, por ejemplo `opendesk_demo` en Docker |
+| `REDIS_HOST`, `REDIS_PORT` | Host y puerto del Redis del entorno |
+| `REDIS_CLIENT` | `auto`, `socket` o `extension` |
+| `REDIS_USERNAME`, `REDIS_PASSWORD` | ACL y contraseña privadas cuando el servidor las exige |
+| `REDIS_DATABASE` | Número de base Redis autorizado |
+| `REDIS_PREFIX` | Prefijo que conserva `grupo3:`, separado por entorno |
+| `APP_PASSWORD_HASH` | Hash privado de la contraseña inicial; se usa al crear el primer administrador |
+| `ATLAS_CONFIG_SOURCE` | Compatibilidad opcional con una configuración Atlas anterior |
+| `APP_PORT` | Puerto local publicado por Docker Compose |
+| `OPENDESK_TEST_DATABASE` | `yes` únicamente para ejecutar pruebas destructivas en una base aislada |
+| `E2E_BASE_URL` | URL del servidor de pruebas Chromium |
 
-Flujo: crear cuenta de cliente → registrar consulta → asignar agente → guardar
-En proceso → Solución propuesta → confirmación y valoración del cliente → Cerrado → reportes.
-SLA inicial: Alta 4 h, Media 24 h y Baja 72 h continuas. Esperando cliente no
-pausa el plazo; cambios de política afectan tickets nuevos.
+Para la carga nativa con mongosh, exportar `MONGODB_URI` y `MONGODB_DATABASE` desde el archivo privado de entorno y ejecutar `mongosh --nodb --file scripts/seed-mongosh.js`. La URI se lee únicamente del entorno; el script no contiene conexiones reales.
 
-## Pruebas y medición
+## Capturas y demostración
+
+Las capturas siguientes corresponden a un entorno de prueba aislado con datos sintéticos, no a cuentas reales del servidor.
+
+![Tickets y responsables](docs/img/tickets.png)
+![Departamentos y equipos](docs/img/equipos.png)
+![Valoración de atención](docs/img/valoracion.png)
+
+El video no se realiza en esta preparación por solicitud del equipo. Se conserva como requisito pendiente del docente. [Guion y reproducción](docs/demo/README.md). [Borrador editable de presentación](docs/presentacion/OpenDesk_presentacion_S4.pptx).
+
+## Pruebas y mediciones
 
 ```bash
 php tests/roles.php
 php tests/integration-tools.php
 php scripts/sync-app.php --check
-php index.php --test
 php scripts/measure.php 1000 5
 ```
 
-Las pruebas de roles usan almacenamiento en memoria y no requieren servicios.
-No sustituyen pruebas contra MongoDB y Redis reales. La medición ejecuta tres
-operaciones (cola MongoDB, lectura equivalente en Redis y agregación MongoDB),
-al menos tres muestras por operación, reporta mediana, memoria, fecha y explain.
-Usa una colección aislada y elimina solo los registros de su ejecución.
-La [primera medición real en CI](docs/mediciones/ci-2026-10-22.md) contiene
-las muestras, medianas y plan observado. Los resultados de Webmin siguen
-pendientes; no se extrapolan las cifras del runner a producción.
-Ver [validación](docs/pruebas.md) y [seguridad](SECURITY.md).
+Las pruebas de roles usan almacenamiento en memoria. La integración real requiere una base aislada y Redis. GitHub Actions comprueba MongoDB/Redis reales, cliente socket, flujo Chromium y una instalación Docker limpia. Nunca ejecutar pruebas de borrado o bootstrap contra producción.
 
-Protocolo y tabla: [mediciones S3](docs/mediciones/protocolo.md).
-Pruebas reales y fallos: [validación de servicios](docs/validacion-servicios.md).
-CI incluye un job con MongoDB/Redis efímeros y conserva evidencia como artifact
-solo si pasa. No equivale a medir el servidor Webmin.
+[Resultados Webmin con tres operaciones y medianas](docs/mediciones/webmin-2026-10-23.md) · [Medición CI separada](docs/mediciones/ci-2026-10-22.md) · [Pruebas](docs/pruebas.md) · [Seguridad](SECURITY.md).
 
-Redis compartido: `REDIS_PREFIX=grupo3:opendesk:` por defecto. Todas las claves
-nuevas conservan `grupo3:`. Se usan strings, sorted sets y hashes con TTL;
-la metadata de cola se devuelve como `cachedAt`. No se usan vaciados globales.
-Si hay ACL, configurar `REDIS_USERNAME` y `REDIS_PASSWORD` solo en privado.
+Las mediciones usan datos sintéticos y no equivalen a carga concurrente ni a tiempos completos de HTTP. El navegador requiere Node.js y Chromium solo para las pruebas, no para usar la aplicación.
 
-## Organización
+## Estructura y trabajo del equipo
 
-`src/`: aplicación y componentes verificables; `docs/`: diseño, modelo y
-seguimientos; `data/`: descripción de datos sintéticos; `scripts/`: utilidades;
-`tests/`: comprobaciones. `src/app.php` es el artefacto completo. Los archivos
-de componentes permiten probar sus reglas. Tras editarlos, ejecutar
-`php scripts/sync-app.php`; CI detecta un artefacto desactualizado. El módulo
-`src/integration.php` contiene diagnósticos, esquemas, caché y mediciones.
+`src/` contiene componentes PHP y el archivo desplegable. `docs/` mantiene arquitectura, evidencias y seguimientos. `data/` describe los datos sintéticos. `scripts/` reúne diagnóstico, carga, esquemas y exportación. `tests/` contiene comprobaciones automatizadas.
 
-## Equipo y seguimiento
+Después de editar componentes PHP, ejecutar `php scripts/sync-app.php`. La integración se hace mediante ramas y pull requests. La excepción académica sobre aportes individuales está registrada en [S1](docs/seguimientos/S1.md); no se inventan commits de otros integrantes.
 
-Repositorio del equipo: vanems96/ProyectoOpenDesk. Rama de trabajo de Joan:
-`Joan`. Cada integrante debe aceptar su acceso y aportar commits desde su
-cuenta. La publicación no crea contribuciones en nombre de otros integrantes.
-Ver [S1](docs/seguimientos/S1.md) y [backlog](docs/backlog.md).
+## Roadmap y entrega
 
-## Capturas y próximos pasos
+[Roadmap detallado](docs/roadmap.md): en un mes, instalación externa, permisos de validadores y accesibilidad; en seis meses, correo, adjuntos y pruebas de carga; como posible graduación, evaluación de políticas de asignación y satisfacción.
 
-Las capturas públicas de esta versión están pendientes de revisión para
-evitar publicar correos o contactos reales. Guion: [demo](docs/demo.md).
-Pendientes: comprobar Redis en Webmin, medir con servicios reales, instalación
-desde cero por otro integrante, evidencias, Issues asignados y release.
-La entrega final del curso apunta a `v1.0.0`; esta preparación no afirma
-que todos sus requisitos estén completados.
+[CHANGELOG](CHANGELOG.md) · [S1](docs/seguimientos/S1.md) · [S2](docs/seguimientos/S2.md) · [S3](docs/seguimientos/S3.md) · [S4](docs/seguimientos/S4.md) · [Ficha del portal](portal.yml) · [Licencia MIT](LICENSE).
 
-### Pruebas de navegador
-
-`npm ci` y `npx playwright install chromium` preparan las pruebas opcionales de
-Chromium. `npm run test:e2e` requiere PHP en puerto 8080, MongoDB y Redis y
-`OPENDESK_TEST_DATABASE=yes` en una base aislada. Nunca ejecutarlas contra la
-base de producción: generan cuentas y eliminan su ticket sintético. GitHub
-Actions prepara el entorno y publica evidencia del flujo y CRUD.
-
-### Redis sin extensión PHP
-
-OpenDesk usa la extensión Redis cuando está disponible y, en su ausencia,
-un cliente PHP por sockets RESP2 que implementa únicamente sus operaciones.
-No requiere sudo ni Composer. `REDIS_CLIENT=socket` fuerza ese cliente para
-pruebas; `REDIS_CLIENT=extension` exige la extensión y `auto` selecciona.
-La conexión conserva autenticación, selección de base, PING, tiempo de espera,
-prefijo grupo3: y contingencia MongoDB. `--diagnose` identifica el cliente.
-Referencia: https://redis.io/docs/latest/develop/reference/protocol-spec/.
-CI ejecuta las pruebas de integración reales también con el cliente socket.
-
-## Seguimiento de tickets y equipos
-
-Consulta las [mejoras de tickets, permisos, equipos, escalamiento, avisos y satisfacción](docs/mejoras-tickets-equipos.md), con rutas de las pantallas y ejecución programable.
+La versión candidata es `v0.9.0`. La entrega final del curso será `v1.0.0`; si el grupo expone en semana 16, el docente evalúa S4 sobre esa versión final. La instalación limpia automatizada no reemplaza la [prueba por alguien que no configuró el proyecto](docs/instalacion/validacion-externa.md), que debe completarse antes de afirmar ese requisito como aprobado.
