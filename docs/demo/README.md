@@ -1,8 +1,10 @@
 # Demostración de OpenDesk
 
-Video público: https://github.com/vanems96/ProyectoOpenDesk/releases/download/v0.9.0/OpenDesk_demo_v0.9.0.mp4
+Estado: PENDIENTE. El equipo decidió producir el video al finalizar los demás entregables. No hay un video publicado todavía.
 
-Duración objetivo de tres a cinco minutos, con subtítulos integrados y sin locución. La grabación muestra Chromium usando la aplicación real contra MongoDB y Redis en un entorno Docker aislado. No muestra cuentas, contraseñas ni conexiones privadas de Webmin. Los tiempos de instalación no forman parte de la grabación del flujo.
+La automatización solo lo graba mediante ejecución manual del workflow con la opción `grabar_demo` activada.
+
+Duración prevista de tres a cinco minutos, con subtítulos integrados y sin locución. El guion preparado mostrará Chromium usando la aplicación real contra MongoDB y Redis en un entorno Docker aislado. No muestra cuentas, contraseñas ni conexiones privadas de Webmin. Los tiempos de instalación no forman parte de la grabación del flujo.
 
 ## Recorrido
 

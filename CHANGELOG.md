@@ -6,7 +6,7 @@
 - Imagen de aplicación con extensión MongoDB y cliente Redis socket, configuración privada por entorno y puertos limitados a localhost.
 - Verificación automatizada desde un checkout limpio, carga idempotente con mongosh y diagnóstico de los motores.
 - README completo, mapa de claves Redis, ficha portal.yml, roadmap y formulario de instalación por otra persona.
-- Demostración guiada de entre tres y cinco minutos, capturas sintéticas y borrador de presentación final.
+- Guion y automatización de la futura demo, capturas sintéticas y borrador de presentación final. El video se deja pendiente por solicitud del equipo.
 - Departamentos y supervisores, sugerencia de asignación por carga, acceso exclusivo al agente asignado y notas internas.
 - Solución propuesta, cierre con valoración, reapertura, notificaciones internas y escalamiento configurable.
 - Validación de documentos desde PHP, conservación de pendientes y fechas visibles dd/mm/aaaa.

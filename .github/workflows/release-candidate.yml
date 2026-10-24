@@ -4,6 +4,12 @@ on:
     branches: [main, Joan-seguimiento-4]
   pull_request:
   workflow_dispatch:
+    inputs:
+      grabar_demo:
+        description: Grabar video de demostracion al finalizar la preparacion
+        type: boolean
+        required: false
+        default: false
 jobs:
   instalacion-y-demo:
     runs-on: ubuntu-latest
@@ -28,22 +34,29 @@ jobs:
           docker compose run --rm seed
           docker compose exec -T app php index.php --test
           docker compose exec -T -e OPENDESK_TEST_DATABASE=yes app php tests/services-real.php > test-results/servicios-docker.json
-          docker compose restart app
-          docker compose up -d --wait app
+          docker compose down
+          docker compose up -d --wait app mongo redis worker
           docker compose exec -T app php scripts/diagnose.php
+      - name: Comprobar primer acceso y persistencia
+        if: github.event_name != 'workflow_dispatch' || !inputs.grabar_demo
+        run: python3 tests/docker-install.py
       - uses: actions/setup-node@v4
+        if: github.event_name == 'workflow_dispatch' && inputs.grabar_demo
         with:
           node-version: '22'
           cache: npm
       - name: Preparar navegador
+        if: github.event_name == 'workflow_dispatch' && inputs.grabar_demo
         run: |
           npm ci --ignore-scripts
           npx playwright install --with-deps chromium
           sudo apt-get update -qq
           sudo apt-get install -y ffmpeg
       - name: Grabar demostracion real
+        if: github.event_name == 'workflow_dispatch' && inputs.grabar_demo
         run: node tests/demo/video.cjs
       - name: Convertir y comprobar duracion
+        if: github.event_name == 'workflow_dispatch' && inputs.grabar_demo
         run: |
           ffmpeg -y -i test-results/demo/OpenDesk_demo.webm -c:v libx264 -preset fast -crf 25 -pix_fmt yuv420p -movflags +faststart test-results/demo/OpenDesk_demo_v0.9.0.mp4
           ffprobe -v quiet -print_format json -show_format test-results/demo/OpenDesk_demo_v0.9.0.mp4 > test-results/demo/video-metadata.json

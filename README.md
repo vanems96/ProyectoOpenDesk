@@ -2,7 +2,7 @@
 
 Sistema web open source en PHP para consultas, garantías, entregas, devoluciones y reclamos. Usa MongoDB para persistencia y Redis para caché. Licencia [MIT](LICENSE). Versión candidata [v0.9.0](https://github.com/vanems96/ProyectoOpenDesk/releases/tag/v0.9.0).
 
-[Demo guiada de 3 a 5 minutos](https://github.com/vanems96/ProyectoOpenDesk/releases/download/v0.9.0/OpenDesk_demo_v0.9.0.mp4) · [Presentación final borrador](docs/presentacion/OpenDesk_presentacion_S4.pptx) · [Bitácora S4](docs/seguimientos/S4.md)
+[Video pendiente para el cierre](docs/demo/README.md) · [Presentación final borrador](docs/presentacion/OpenDesk_presentacion_S4.pptx) · [Bitácora S4](docs/seguimientos/S4.md)
 
 ## Problema y usuarios
 
@@ -202,7 +202,7 @@ Las capturas siguientes corresponden a un entorno de prueba aislado con datos si
 ![Departamentos y equipos](docs/img/equipos.png)
 ![Valoración de atención](docs/img/valoracion.png)
 
-[Ver video guiado con subtítulos integrados sin locución](https://github.com/vanems96/ProyectoOpenDesk/releases/download/v0.9.0/OpenDesk_demo_v0.9.0.mp4). [Guion y reproducción](docs/demo/README.md). [Borrador editable de presentación](docs/presentacion/OpenDesk_presentacion_S4.pptx).
+El video de tres a cinco minutos queda pendiente por decisión del equipo y se incorporará al terminar los demás entregables. [Guion y reproducción](docs/demo/README.md). [Borrador editable de presentación](docs/presentacion/OpenDesk_presentacion_S4.pptx).
 
 ## Pruebas y mediciones
 
@@ -213,7 +213,7 @@ php scripts/sync-app.php --check
 php scripts/measure.php 1000 5
 ```
 
-Las pruebas de roles usan almacenamiento en memoria. La integración real requiere una base aislada y Redis. GitHub Actions comprueba MongoDB/Redis reales, cliente socket, flujo Chromium y una instalación Docker limpia. Nunca ejecutar pruebas de borrado o bootstrap contra producción.
+Las pruebas de roles usan almacenamiento en memoria. La integración real requiere una base aislada y Redis. GitHub Actions comprueba MongoDB/Redis reales, cliente socket, flujo Chromium y una instalación Docker limpia. La grabación solo se ejecuta manualmente al activar su opción. Nunca ejecutar pruebas de borrado o bootstrap contra producción.
 
 [Resultados Webmin con tres operaciones y medianas](docs/mediciones/webmin-2026-10-23.md) · [Medición CI separada](docs/mediciones/ci-2026-10-22.md) · [Pruebas](docs/pruebas.md) · [Seguridad](SECURITY.md).
 
