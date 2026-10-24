@@ -133,9 +133,23 @@ final class Collection {
     public function __construct(private MongoDB\Driver\Manager $manager,private string $db,private string $name){}
     public function find(array $filter=[],array $options=[]):MongoDB\Driver\Cursor{$cursor=$this->manager->executeQuery($this->db.'.'.$this->name,new MongoDB\Driver\Query($filter,$options));$cursor->setTypeMap(['root'=>'array','document'=>'array','array'=>'array']);return $cursor;}
     public function findOne(array $filter,array $options=[]):?array{$options['limit']=1;return $this->find($filter,$options)->toArray()[0]??null;}
-    public function insertOne(array $document):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
-    public function insertMany(array $documents):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();foreach($documents as $document)$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
-    public function updateOne(array $filter,array $update,array $options=[]):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->update($filter,$update,['multi'=>false,'upsert'=>(bool)($options['upsert']??false)]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
+    public function insertOne(array $document):MongoDB\Driver\WriteResult{validateCollectionDocument($this->name,$document);$bulk=new MongoDB\Driver\BulkWrite();$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
+    public function insertMany(array $documents):MongoDB\Driver\WriteResult{foreach($documents as $document)validateCollectionDocument($this->name,$document);$bulk=new MongoDB\Driver\BulkWrite();foreach($documents as $document)$bulk->insert($document);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
+    public function updateOne(array $filter,array $update,array $options=[]):MongoDB\Driver\WriteResult{
+        $upsert=(bool)($options['upsert']??false);
+        if(isset(mongoSchemas()[$this->name])){
+            $before=$this->findOne($filter);
+            if($before!==null){
+                validateCollectionDocument($this->name,schemaUpdatedDocument($before,$update,false));
+                // Solo escribir sobre la instantánea validada; no pisar cambios concurrentes.
+                $filter=['$and'=>[$filter,$before]];$upsert=false;
+            }elseif($upsert){
+                $base=[];foreach($filter as $field=>$value)if(!str_starts_with((string)$field,'$')&&!is_array($value))$base[$field]=$value;
+                validateCollectionDocument($this->name,schemaUpdatedDocument($base,$update,true));
+            }
+        }
+        $bulk=new MongoDB\Driver\BulkWrite();$bulk->update($filter,$update,['multi'=>false,'upsert'=>$upsert]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);
+    }
     public function deleteOne(array $filter):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->delete($filter,['limit'=>1]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
     public function deleteMany(array $filter):MongoDB\Driver\WriteResult{$bulk=new MongoDB\Driver\BulkWrite();$bulk->delete($filter,['limit'=>0]);return $this->manager->executeBulkWrite($this->db.'.'.$this->name,$bulk);}
     public function countDocuments(array $filter):int{$c=$this->manager->executeCommand($this->db,new MongoDB\Driver\Command(['aggregate'=>$this->name,'pipeline'=>[['$match'=>(object)$filter],['$count'=>'total']],'cursor'=>(object)[]]));$c->setTypeMap(['root'=>'array','document'=>'array','array'=>'array']);return (int)($c->toArray()[0]['total']??0);}
@@ -292,6 +306,42 @@ function mongoSchemas():array {
             'id'=>$id,'name'=>$text(100),'type'=>['enum'=>['Producto','Servicio']],'category'=>$text(100),'reference'=>$text(100),'status'=>['enum'=>['Disponible','Suspendido','Retirado']],
         ]],
     ];
+}
+
+// Valida el subconjunto JSON Schema utilizado por mongoSchemas(), sin collMod.
+// No sustituye validadores del motor para escrituras hechas fuera de OpenDesk.
+function validateSchemaValue(mixed $value,array $schema,string $path):void {
+    if(isset($schema['enum'])&&!in_array($value,$schema['enum'],true))throw new InvalidArgumentException('Valor no permitido en '.$path.'.');
+    if(isset($schema['bsonType'])){
+        $valid=false;foreach((array)$schema['bsonType'] as $type){$valid=$valid||match($type){
+            'object'=>is_array($value)&&($value===[]||!array_is_list($value)),
+            'array'=>is_array($value)&&array_is_list($value),'string'=>is_string($value),
+            'int','long'=>is_int($value),'bool'=>is_bool($value),default=>false};}
+        if(!$valid)throw new InvalidArgumentException('Tipo inválido en '.$path.'.');
+    }
+    if(is_string($value)){
+        $length=preg_match_all('/./us',$value);if($length===false)throw new InvalidArgumentException('Texto inválido en '.$path.'.');
+        if(isset($schema['minLength'])&&$length<$schema['minLength']||isset($schema['maxLength'])&&$length>$schema['maxLength'])throw new InvalidArgumentException('Longitud inválida en '.$path.'.');
+    }
+    if(isset($schema['minimum'])&&(!is_int($value)||$value<$schema['minimum']))throw new InvalidArgumentException('Valor fuera de rango en '.$path.'.');
+    foreach($schema['required']??[] as $field)if(!is_array($value)||!array_key_exists($field,$value))throw new InvalidArgumentException('Falta '.$path.'.'.$field.'.');
+    foreach($schema['properties']??[] as $field=>$rule)if(is_array($value)&&array_key_exists($field,$value))validateSchemaValue($value[$field],$rule,$path.'.'.$field);
+    if(isset($schema['items'])&&is_array($value))foreach($value as $index=>$item)validateSchemaValue($item,$schema['items'],$path.'['.$index.']');
+}
+function validateCollectionDocument(string $collection,array $document):void {
+    $schema=mongoSchemas()[$collection]??null;if($schema)validateSchemaValue($document,$schema,$collection);
+}
+function schemaUpdatedDocument(array $document,array $update,bool $insert):array {
+    foreach($update as $operator=>$fields){
+        if(!in_array($operator,['$set','$setOnInsert','$inc','$push','$unset'],true)||!is_array($fields))throw new InvalidArgumentException('Actualización no soportada por el esquema PHP.');
+        foreach($fields as $field=>$value){
+            if(!is_string($field)||str_contains($field,'.')||str_starts_with($field,'$'))throw new InvalidArgumentException('Campo de actualización inválido.');
+            if($operator==='$set'||$operator==='$setOnInsert'&&$insert)$document[$field]=$value;
+            elseif($operator==='$unset')unset($document[$field]);
+            elseif($operator==='$inc'){if(!is_int($value)||isset($document[$field])&&!is_int($document[$field]))throw new InvalidArgumentException('Incremento inválido.');$document[$field]=($document[$field]??0)+$value;}
+            elseif($operator==='$push'){if(isset($document[$field])&&(!is_array($document[$field])||!array_is_list($document[$field])))throw new InvalidArgumentException('Lista inválida.');$document[$field][]=$value;}
+        }
+    }return $document;
 }
 
 function installMongoSchemas(Database $database):array {
