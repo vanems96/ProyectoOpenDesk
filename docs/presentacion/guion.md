@@ -29,4 +29,4 @@ Crear o elegir cuentas ficticias para administrador, agente y cliente. Preparar 
 
 ## Pendientes declarados
 
-El video no se realiza por solicitud del equipo. La instalación por otra persona sigue pendiente de evidencia humana; la prueba automatizada no se firma en su nombre. Los nombres públicos del portal requieren autorización y permanecen vacíos. El PDF del Aula Virtual y la versión v1.0.0 corresponden a la entrega final, no a este borrador S4.
+El video no se realiza por solicitud del equipo. La instalación por otra persona sigue pendiente de evidencia humana; la prueba automatizada no se firma en su nombre. Los autores del proyecto figuran en el README y en portal.yml conforme a la lista proporcionada por Joan. El PDF del Aula Virtual y la versión v1.0.0 corresponden a la entrega final, no a este borrador S4.

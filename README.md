@@ -232,3 +232,9 @@ Después de editar componentes PHP, ejecutar `php scripts/sync-app.php`. La inte
 [CHANGELOG](CHANGELOG.md) · [S1](docs/seguimientos/S1.md) · [S2](docs/seguimientos/S2.md) · [S3](docs/seguimientos/S3.md) · [S4](docs/seguimientos/S4.md) · [Ficha del portal](portal.yml) · [Licencia MIT](LICENSE).
 
 La versión candidata es `v0.9.0`. La entrega final del curso será `v1.0.0`; si el grupo expone en semana 16, el docente evalúa S4 sobre esa versión final. La instalación limpia automatizada no reemplaza la [prueba por alguien que no configuró el proyecto](docs/instalacion/validacion-externa.md), que debe completarse antes de afirmar ese requisito como aprobado.
+
+## Autores
+
+- Joan Enrique Chavarría Peraza
+- Mariela Morales Segura
+- Emily Muñoz Rodríguez
