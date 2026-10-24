@@ -34,7 +34,7 @@ base aislada; nunca marcar producción como OPENDESK_TEST_DATABASE=yes.
 
 1. Cliente A crea ticket; Cliente B no lo consulta ni actualiza.
 2. Administrador asigna a agente activo y guarda En atención.
-3. Agente asignado registra solución y Resuelto; otro agente no lo atiende.
+3. Agente asignado registra Solución propuesta; el cliente confirma el cierre y valora. Otro agente no lo ve ni lo atiende.
 4. Administrador reabre; se conserva historial y se retira resolvedAt.
 5. Datos inválidos (prioridad, categoría, responsable) se rechazan sin stack trace.
 6. En base aislada, insertar un ticket inválido directamente en MongoDB debe

@@ -105,14 +105,14 @@ function mongoSchemas():array {
             'id'=>$id,'subject'=>['bsonType'=>'string','minLength'=>1,'maxLength'=>160],
             'description'=>['bsonType'=>'string','minLength'=>1,'maxLength'=>4000],
             'clientId'=>$id,'productId'=>$text(64),'assigneeId'=>$text(64),'createdBy'=>$text(64),
-            'priority'=>['enum'=>['Alta','Media','Baja']],'status'=>['enum'=>STATUSES],
+            'departmentId'=>['enum'=>array_keys(DEPARTMENTS)],'waitingFor'=>['enum'=>['cliente','agente','ninguno']],'rating'=>['bsonType'=>['int','long'],'minimum'=>1,'maximum'=>5],'ratingComment'=>['bsonType'=>'string','maxLength'=>1000],'priority'=>['enum'=>['Alta','Media','Baja']],'status'=>['enum'=>STATUSES],
             'category'=>['enum'=>['Consulta','Reclamo','Devolución','Garantía','Problema con pedido']],
-            'createdAt'=>$time,'dueAt'=>$time,'firstResponseAt'=>$time,'resolvedAt'=>$time,
-            'history'=>['bsonType'=>'array','items'=>['bsonType'=>'object','required'=>['date','text'],'properties'=>['date'=>$time,'text'=>$text(2400)]]],
+            'createdAt'=>$time,'dueAt'=>$time,'firstResponseAt'=>$time,'resolvedAt'=>$time,'lastActivityAt'=>$time,'closedAt'=>$time,'escalatedAt'=>$time,'slaStage'=>['enum'=>['warning','overdue']],
+            'history'=>['bsonType'=>'array','items'=>['bsonType'=>'object','required'=>['date','text'],'properties'=>['date'=>$time,'text'=>$text(4000),'id'=>$id,'actorId'=>$text(64),'visibility'=>['enum'=>['public','internal']],'kind'=>['enum'=>['respuesta','asignacion','resolucion','cierre','reapertura','escalamiento']],'recipients'=>['bsonType'=>'array','items'=>$id]]]],
         ]],
         'odac_users'=>['bsonType'=>'object','required'=>['id','name','email','role','active','clientId','passwordHash','version','mustChangePassword'],'properties'=>[
             'id'=>$id,'name'=>$text(100),'email'=>$text(160),'clientId'=>$id,'passwordHash'=>['bsonType'=>'string','minLength'=>20],
-            'role'=>['enum'=>USER_ROLES],'active'=>['bsonType'=>'bool'],'mustChangePassword'=>['bsonType'=>'bool'],
+            'departmentId'=>['enum'=>array_keys(DEPARTMENTS)],'supervisor'=>['bsonType'=>'bool'],'role'=>['enum'=>USER_ROLES],'active'=>['bsonType'=>'bool'],'mustChangePassword'=>['bsonType'=>'bool'],
             'version'=>['bsonType'=>['int','long'],'minimum'=>1],
         ]],
         'odac_clients'=>['bsonType'=>'object','required'=>['id','name','email','phone','company'],'properties'=>[
@@ -140,6 +140,7 @@ function validateSchemaValue(mixed $value,array $schema,string $path):void {
         if(isset($schema['minLength'])&&$length<$schema['minLength']||isset($schema['maxLength'])&&$length>$schema['maxLength'])throw new InvalidArgumentException('Longitud inválida en '.$path.'.');
     }
     if(isset($schema['minimum'])&&(!is_int($value)||$value<$schema['minimum']))throw new InvalidArgumentException('Valor fuera de rango en '.$path.'.');
+    if(isset($schema['maximum'])&&(!is_int($value)||$value>$schema['maximum']))throw new InvalidArgumentException('Valor fuera de rango en '.$path.'.');
     foreach($schema['required']??[] as $field)if(!is_array($value)||!array_key_exists($field,$value))throw new InvalidArgumentException('Falta '.$path.'.'.$field.'.');
     foreach($schema['properties']??[] as $field=>$rule)if(is_array($value)&&array_key_exists($field,$value))validateSchemaValue($value[$field],$rule,$path.'.'.$field);
     if(isset($schema['items'])&&is_array($value))foreach($value as $index=>$item)validateSchemaValue($item,$schema['items'],$path.'['.$index.']');

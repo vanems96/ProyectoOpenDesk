@@ -36,7 +36,7 @@ $methods=array_column($spy->calls,0);foreach(['setex','zAdd','hMSet'] as $method
 foreach($spy->calls as [$method,$args]){verify(str_starts_with($args[0],'grupo3:'),'Every cache key scoped');if($method==='expire')verify($args[1]===15,'Short metadata TTL');}
 $document=['id'=>'schema-ticket','subject'=>'Consulta','description'=>'Descripción','clientId'=>'schema-client','priority'=>'Alta','status'=>'Nuevo','createdAt'=>1,'dueAt'=>2,'history'=>[['date'=>1,'text'=>'Creado']]];
 validateCollectionDocument('odac_tickets',$document);verify(true,'PHP schema valid document');
-foreach([['priority','Urgente'],['createdAt',-1],['createdAt','1'],['subject',''],['history',[['date'=>1]]],['subject',"\xFF"]] as [$field,$value]){
+foreach([['rating',6],['departmentId','incorrecto'],['history',[['date'=>1,'text'=>'Prueba','visibility'=>'secret']]],['priority','Urgente'],['createdAt',-1],['createdAt','1'],['subject',''],['history',[['date'=>1]]],['subject',"\xFF"]] as [$field,$value]){
     $bad=$document;$bad[$field]=$value;try{validateCollectionDocument('odac_tickets',$bad);verify(false,'Bad document accepted');}catch(InvalidArgumentException $e){verify(true,'PHP schema rejects '.$field);}
 }
 $unicode=$document;$unicode['subject']=str_repeat('á',160);validateCollectionDocument('odac_tickets',$unicode);verify(true,'Unicode characters counted, not bytes');
