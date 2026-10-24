@@ -1,0 +1,58 @@
+name: Instalacion limpia S4
+on:
+  push:
+    branches: [main, Joan-seguimiento-4]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  instalacion-y-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OPENDESK_TEST_DATABASE: 'yes'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalacion siguiendo el README
+        run: |
+          test ! -e .env
+          cp .env.docker.example .env
+          docker compose config --quiet
+          docker compose build app
+          docker compose up -d --wait app mongo redis worker
+          mkdir -p test-results
+          docker compose exec -T app php scripts/diagnose.php > test-results/instalacion-diagnostico.json
+          docker compose exec -T app php scripts/mongo-schema.php
+          docker compose exec -T app php scripts/seed.php
+          docker compose exec -T app php scripts/seed.php
+          docker compose run --rm seed
+          docker compose run --rm seed
+          docker compose exec -T app php index.php --test
+          docker compose exec -T -e OPENDESK_TEST_DATABASE=yes app php tests/services-real.php > test-results/servicios-docker.json
+          docker compose restart app
+          docker compose up -d --wait app
+          docker compose exec -T app php scripts/diagnose.php
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Preparar navegador
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+      - name: Grabar demostracion real
+        run: node tests/demo/video.cjs
+      - name: Convertir y comprobar duracion
+        run: |
+          ffmpeg -y -i test-results/demo/OpenDesk_demo.webm -c:v libx264 -preset fast -crf 25 -pix_fmt yuv420p -movflags +faststart test-results/demo/OpenDesk_demo_v0.9.0.mp4
+          ffprobe -v quiet -print_format json -show_format test-results/demo/OpenDesk_demo_v0.9.0.mp4 > test-results/demo/video-metadata.json
+          python3 -c "import json; d=float(json.load(open('test-results/demo/video-metadata.json'))['format']['duration']); assert 180 <= d <= 300, d; print('Duracion verificada:',d)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seguimiento-4-instalacion-demo
+          path: test-results/
+      - name: Detener entorno sin borrar volumenes
+        if: always()
+        run: docker compose down

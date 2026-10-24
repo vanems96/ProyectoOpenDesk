@@ -1,0 +1,15 @@
+nombre: OpenDesk Atención al Cliente
+resumen: Gestión de consultas garantías entregas y reclamos con MongoDB y cola priorizada en Redis
+problema: Las solicitudes dispersas dificultan asignar responsables conservar el historial y cumplir plazos de atención
+usuarios: Clientes agentes supervisores de departamento y administradores
+motores: [Redis, MongoDB]
+lenguaje: PHP
+licencia: MIT
+repositorio: https://github.com/vanems96/ProyectoOpenDesk
+demo_video: https://github.com/vanems96/ProyectoOpenDesk/releases/download/v0.9.0/OpenDesk_demo_v0.9.0.mp4
+demo_url: https://grupo3.crnube.org/Opendesk/
+captura: docs/img/tickets.png
+grupo: 3
+dia: viernes
+periodo: II-2026
+autores_publicos: []

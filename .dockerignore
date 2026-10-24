@@ -1,0 +1,15 @@
+.git
+.env
+.env.*
+!.env.example
+!.env.docker.example
+private
+node_modules
+dist
+outputs
+work
+test-results
+playwright-report
+*.log
+*.bak
+*.zip
