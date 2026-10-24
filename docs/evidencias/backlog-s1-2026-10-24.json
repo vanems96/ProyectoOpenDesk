@@ -1,0 +1,203 @@
+{
+  "checkedAtCR": "24/10/2026",
+  "repository": "https://github.com/vanems96/ProyectoOpenDesk",
+  "scope": "Todas las issues, incluidas cerradas; excluye pull requests",
+  "allHaveAssigneeAndMilestone": true,
+  "issues": [
+    {
+      "number": 24,
+      "title": "Validar instalacion por una persona que no configuro OpenDesk",
+      "state": "open",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 4,
+        "title": "S4 Semana 16 Release candidate"
+      }
+    },
+    {
+      "number": 23,
+      "title": "Preparar release candidate v0.9.0 del seguimiento 4",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 4,
+        "title": "S4 Semana 16 Release candidate"
+      }
+    },
+    {
+      "number": 15,
+      "title": "Revision de avance semana 3",
+      "state": "closed",
+      "assignees": [
+        "vanems96",
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 2,
+        "title": "S3 Integración pruebas y medición"
+      }
+    },
+    {
+      "number": 14,
+      "title": "Ejecutar tres mediciones con mediana y documentar fallos",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 2,
+        "title": "S3 Integración pruebas y medición"
+      }
+    },
+    {
+      "number": 13,
+      "title": "Activar JSON Schema nativo en Webmin cuando el administrador habilite collMod",
+      "state": "open",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 3,
+        "title": "Operación posterior a S3"
+      }
+    },
+    {
+      "number": 11,
+      "title": "Crear bitacora v2",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 1,
+        "title": "S2 Núcleo funcional"
+      }
+    },
+    {
+      "number": 10,
+      "title": "Crear el issue del ito 2",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 1,
+        "title": "S2 Núcleo funcional"
+      }
+    },
+    {
+      "number": 9,
+      "title": "Generar pull request Joan",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 1,
+        "title": "S2 Núcleo funcional"
+      }
+    },
+    {
+      "number": 8,
+      "title": "Generar pull request Mariela",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 5,
+        "title": "S1 Problema arquitectura y repositorio"
+      }
+    },
+    {
+      "number": 7,
+      "title": "Generar script de carga",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 1,
+        "title": "S2 Núcleo funcional"
+      }
+    },
+    {
+      "number": 6,
+      "title": "Generar CRUD completo del proyecto",
+      "state": "closed",
+      "assignees": [
+        "vanems96",
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 1,
+        "title": "S2 Núcleo funcional"
+      }
+    },
+    {
+      "number": 5,
+      "title": "Crear Project en gitHub",
+      "state": "closed",
+      "assignees": [
+        "vanems96"
+      ],
+      "milestone": {
+        "number": 5,
+        "title": "S1 Problema arquitectura y repositorio"
+      }
+    },
+    {
+      "number": 4,
+      "title": "Revisar gitHub",
+      "state": "closed",
+      "assignees": [
+        "vanems96"
+      ],
+      "milestone": {
+        "number": 5,
+        "title": "S1 Problema arquitectura y repositorio"
+      }
+    },
+    {
+      "number": 3,
+      "title": "Validacion de flujo asignar tiquetes",
+      "state": "closed",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 1,
+        "title": "S2 Núcleo funcional"
+      }
+    },
+    {
+      "number": 2,
+      "title": "Validar registrar tiquete",
+      "state": "closed",
+      "assignees": [
+        "vanems96",
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 1,
+        "title": "S2 Núcleo funcional"
+      }
+    },
+    {
+      "number": 1,
+      "title": "Creacion de logo",
+      "state": "open",
+      "assignees": [
+        "JoaChP"
+      ],
+      "milestone": {
+        "number": 4,
+        "title": "S4 Semana 16 Release candidate"
+      }
+    }
+  ]
+}
