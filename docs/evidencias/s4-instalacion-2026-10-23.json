@@ -1,0 +1,31 @@
+{
+  "dateCR": "23/10/2026",
+  "sourceCommit": "8704672c6f6e36564a045d345b0797b31b2610e2",
+  "ciUrl": "https://github.com/vanems96/ProyectoOpenDesk/actions/runs/40067710447",
+  "diagnostic": {
+    "checkedAt": "2026-10-24T05:51:23+00:00",
+    "mongo": true,
+    "redis": true,
+    "mongoExtension": true,
+    "redisExtension": false,
+    "redisClient": "php_socket",
+    "redisStructures": [
+      "string",
+      "sorted_set",
+      "hash"
+    ]
+  },
+  "httpValidation": {
+    "environment": "Docker limpio CI",
+    "firstAdministrator": true,
+    "forcedPasswordChange": true,
+    "httpLogin": true,
+    "mongo": true,
+    "redis": true,
+    "syntheticTicketsAfterRestart": 8,
+    "privateFilesHttp404": true,
+    "independentHumanValidation": false
+  },
+  "humanValidation": "pending",
+  "video": "not produced by user request"
+}

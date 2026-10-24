@@ -14,6 +14,8 @@ jobs:
         run: php tests/roles.php
       - name: Integration tool tests
         run: php tests/integration-tools.php
+      - name: Entregables seguimiento 4
+        run: python3 tests/release-docs.py
       - name: Deployable artifact synchronization
         run: php scripts/sync-app.php --check
   services:
