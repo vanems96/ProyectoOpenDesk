@@ -71,3 +71,25 @@ El despliegue mantiene un PHP exportable y configuración privada separada.
 Los componentes editables se sincronizan con `scripts/sync-app.php`. CI
 comprueba su coincidencia. Alternativa: mantener copias independientes;
 se descarta porque sus reglas podrían divergir de las pruebas.
+
+
+## Cliente Redis PHP sin extensión del sistema
+
+El servidor Redis respondía PONG, pero PHP 8.3 carecía de la extensión redis y
+grupo3 no tiene sudo. Se eligió un cliente RESP2 por sockets integrado en PHP,
+limitado a las operaciones de OpenDesk, con tiempos de espera, límites de
+respuesta, autenticación, selección de base y PING. La extensión se prefiere
+si existe; REDIS_CLIENT=socket permite comprobar la alternativa.
+Alternativas: solicitar instalación del paquete del sistema o agregar una
+dependencia Composer. Se eligió el cliente limitado para conservar el PHP único
+y operar con los permisos existentes. No es un cliente general de Redis Cluster,
+Sentinel ni Pub/Sub. La fuente permanente sigue siendo MongoDB.
+Referencia: https://redis.io/docs/latest/develop/reference/protocol-spec/.
+
+## Restricción administrativa de validadores en Webmin
+
+El 23/10/2026 se comprobó compatibilidad de las cuatro colecciones, se respaldaron
+documentos y metadatos en ubicación privada y se intentó activar los esquemas.
+MongoDB negó collMod. Se conserva validación PHP y evidencia de validadores en CI;
+la activación del servidor se reprograma al administrador sin ampliar permisos.
+Esta limitación se registra explícitamente; no se declara activación exitosa.

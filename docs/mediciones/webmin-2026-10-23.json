@@ -1,0 +1,258 @@
+{
+    "measuredAt": "2026-10-24T02:06:07+00:00",
+    "php": "8.3.6",
+    "documents": 100,
+    "pageSize": 100,
+    "runs": 3,
+    "cacheMode": "warm",
+    "operations": {
+        "mongo_queue": {
+            "samplesMs": [
+                0.929764,
+                1.07137,
+                0.940619
+            ],
+            "medianMs": 0.9406
+        },
+        "redis_queue": {
+            "samplesMs": [
+                0.367784,
+                0.386718,
+                0.346144
+            ],
+            "medianMs": 0.3678
+        },
+        "mongo_aggregation": {
+            "samplesMs": [
+                3.503266,
+                0.828134,
+                0.778331
+            ],
+            "medianMs": 0.8281
+        }
+    },
+    "mongoExplain": {
+        "explainVersion": "1",
+        "queryPlanner": {
+            "namespace": "grupo3_db.odac_benchmark_tickets",
+            "indexFilterSet": false,
+            "parsedQuery": {
+                "$and": [
+                    {
+                        "run": {
+                            "$eq": "5ac43e230722c78ace3c325dbfe13dc4"
+                        }
+                    },
+                    {
+                        "status": {
+                            "$eq": "Nuevo"
+                        }
+                    }
+                ]
+            },
+            "queryHash": "6F6B6F1C",
+            "planCacheKey": "881B70A9",
+            "optimizationTimeMillis": 0,
+            "maxIndexedOrSolutionsReached": false,
+            "maxIndexedAndSolutionsReached": false,
+            "maxScansToExplodeReached": false,
+            "winningPlan": {
+                "stage": "LIMIT",
+                "limitAmount": 100,
+                "inputStage": {
+                    "stage": "FETCH",
+                    "inputStage": {
+                        "stage": "IXSCAN",
+                        "keyPattern": {
+                            "run": 1,
+                            "status": 1,
+                            "priority": 1,
+                            "dueAt": 1
+                        },
+                        "indexName": "run_1_status_1_priority_1_dueAt_1",
+                        "isMultiKey": false,
+                        "multiKeyPaths": {
+                            "run": [],
+                            "status": [],
+                            "priority": [],
+                            "dueAt": []
+                        },
+                        "isUnique": false,
+                        "isSparse": false,
+                        "isPartial": false,
+                        "indexVersion": 2,
+                        "direction": "forward",
+                        "indexBounds": {
+                            "run": [
+                                "[\"5ac43e230722c78ace3c325dbfe13dc4\", \"5ac43e230722c78ace3c325dbfe13dc4\"]"
+                            ],
+                            "status": [
+                                "[\"Nuevo\", \"Nuevo\"]"
+                            ],
+                            "priority": [
+                                "[MinKey, MaxKey]"
+                            ],
+                            "dueAt": [
+                                "[MinKey, MaxKey]"
+                            ]
+                        }
+                    }
+                }
+            },
+            "rejectedPlans": []
+        },
+        "executionStats": {
+            "executionSuccess": true,
+            "nReturned": 100,
+            "executionTimeMillis": 1,
+            "totalKeysExamined": 100,
+            "totalDocsExamined": 100,
+            "executionStages": {
+                "stage": "LIMIT",
+                "nReturned": 100,
+                "executionTimeMillisEstimate": 0,
+                "works": 101,
+                "advanced": 100,
+                "needTime": 0,
+                "needYield": 0,
+                "saveState": 0,
+                "restoreState": 0,
+                "isEOF": 1,
+                "limitAmount": 100,
+                "inputStage": {
+                    "stage": "FETCH",
+                    "nReturned": 100,
+                    "executionTimeMillisEstimate": 0,
+                    "works": 100,
+                    "advanced": 100,
+                    "needTime": 0,
+                    "needYield": 0,
+                    "saveState": 0,
+                    "restoreState": 0,
+                    "isEOF": 0,
+                    "docsExamined": 100,
+                    "alreadyHasObj": 0,
+                    "inputStage": {
+                        "stage": "IXSCAN",
+                        "nReturned": 100,
+                        "executionTimeMillisEstimate": 0,
+                        "works": 100,
+                        "advanced": 100,
+                        "needTime": 0,
+                        "needYield": 0,
+                        "saveState": 0,
+                        "restoreState": 0,
+                        "isEOF": 0,
+                        "keyPattern": {
+                            "run": 1,
+                            "status": 1,
+                            "priority": 1,
+                            "dueAt": 1
+                        },
+                        "indexName": "run_1_status_1_priority_1_dueAt_1",
+                        "isMultiKey": false,
+                        "multiKeyPaths": {
+                            "run": [],
+                            "status": [],
+                            "priority": [],
+                            "dueAt": []
+                        },
+                        "isUnique": false,
+                        "isSparse": false,
+                        "isPartial": false,
+                        "indexVersion": 2,
+                        "direction": "forward",
+                        "indexBounds": {
+                            "run": [
+                                "[\"5ac43e230722c78ace3c325dbfe13dc4\", \"5ac43e230722c78ace3c325dbfe13dc4\"]"
+                            ],
+                            "status": [
+                                "[\"Nuevo\", \"Nuevo\"]"
+                            ],
+                            "priority": [
+                                "[MinKey, MaxKey]"
+                            ],
+                            "dueAt": [
+                                "[MinKey, MaxKey]"
+                            ]
+                        },
+                        "keysExamined": 100,
+                        "seeks": 1,
+                        "dupsTested": 0,
+                        "dupsDropped": 0
+                    }
+                }
+            }
+        },
+        "command": {
+            "find": "odac_benchmark_tickets",
+            "filter": {
+                "run": "5ac43e230722c78ace3c325dbfe13dc4",
+                "status": "Nuevo"
+            },
+            "sort": {
+                "priority": 1,
+                "dueAt": 1
+            },
+            "limit": 100,
+            "$db": "grupo3_db"
+        },
+        "serverInfo": {
+            "host": "viernes.crnube.com",
+            "port": 27017,
+            "version": "7.0.45",
+            "gitVersion": "a52313e13ab55c9bddf7c3ff91dab286fa381796"
+        },
+        "serverParameters": {
+            "internalQueryFacetBufferSizeBytes": 104857600,
+            "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+            "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+            "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+            "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+            "internalQueryProhibitBlockingMergeOnMongoS": 0,
+            "internalQueryMaxAddToSetBytes": 104857600,
+            "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+            "internalQueryFrameworkControl": "forceClassicEngine"
+        },
+        "ok": 1
+    },
+    "aggregation": [
+        {
+            "_id": 0,
+            "total": 34
+        },
+        {
+            "_id": 1,
+            "total": 33
+        },
+        {
+            "_id": 2,
+            "total": 33
+        }
+    ],
+    "peakPhpMemoryMB": 2,
+    "provenance": {
+        "environment": "Webmin grupo3 PHP 8.3 MongoDB local Redis local",
+        "client": "php_socket",
+        "notCI": true
+    },
+    "diagnostic": {
+        "checkedAt": "2026-10-24T02:06:55+00:00",
+        "mongo": true,
+        "redis": true,
+        "mongoExtension": true,
+        "redisExtension": false,
+        "redisClient": "php_socket",
+        "redisStructures": [
+            "string",
+            "sorted_set",
+            "hash"
+        ]
+    },
+    "schema": {
+        "compatibleCollections": 4,
+        "incompatibleDocuments": 0,
+        "activation": "denied_collMod",
+        "privateBackup": true
+    }
+}
