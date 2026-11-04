@@ -7,6 +7,8 @@ config.php
 config.local.php
 private/
 ACCESO-PRIVADO.txt
+Proyecto_Final_Grupo_3.pdf
+privado/
 *.pem
 *.key
 *.p12

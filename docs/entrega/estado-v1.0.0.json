@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "date": "03/11/2026",
+  "software_scope": "MVP PHP MongoDB Redis",
+  "software_release_ready": true,
+  "academic_requirements_complete": false,
+  "video": {
+    "status": "not_produced",
+    "url": "",
+    "basis": "El usuario confirmó el 03/11/2026 que no hay video; no se afirma exención docente."
+  },
+  "independent_installation": {
+    "status": "pending",
+    "person": null,
+    "date": null,
+    "result": null,
+    "basis": "El usuario indicó que un compañero la realizará próximamente siguiendo el README."
+  },
+  "native_schema_webmin": {
+    "status": "deferred",
+    "issue": 13,
+    "basis": "collMod requiere permisos administrativos; PHP valida negocio y MongoDB nativo se prueba en CI."
+  },
+  "individual_commits": {
+    "status": "scope_exception",
+    "evidence": "docs/seguimientos/S1.md",
+    "basis": "Excepción comunicada por Joan: él realiza los commits y PR."
+  }
+}

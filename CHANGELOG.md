@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.0 · 03/11/2026
+
+- Cierre técnico del MVP de atención al cliente: roles, equipos, tickets, SLA, notificaciones internas, satisfacción y auditoría.
+- README ampliado con instalación Docker paso a paso, Windows/Linux, primer administrador, prueba por roles, persistencia y diagnóstico de errores.
+- Sincronización PHP compatible con saltos de línea Windows/Linux y exportación Webmin con logo y VERSION.
+- Presentación final editable y PDF, matriz de requisitos y paquete de distribución sin secretos.
+- Evidencias HTTPS con cinco recorridos, 78 comprobaciones y mediana de 4,718 s, conservando los ensayos internos anteriores.
+- Video no realizado e instalación por un compañero pendiente: limitaciones académicas explícitas, sin afirmar cumplimiento inexistente.
+
+
 ## Sin versión nueva · 03/11/2026
 
 - Medición del flujo publicado por HTTPS: cinco recorridos, 27 peticiones por recorrido y 78 comprobaciones aprobadas; mediana total de 4,718 s.
