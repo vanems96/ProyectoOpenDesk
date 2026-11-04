@@ -51,3 +51,7 @@ porcentual si la base de comparación es cero ni generalizar una ejecución.
 
 Las muestras de GitHub Actions validan el procedimiento en contenedores
 efímeros; no acreditan la latencia ni disponibilidad de Webmin o Atlas.
+
+## Protocolo adicional por HTTPS
+
+El [ensayo del aplicativo publicado](http-2026-11-03/README.md) mide cinco recorridos completos por HTTPS y publica las muestras en segundos. Incluye red y servidor; la prueba de motores descrita arriba conserva sus unidades en milisegundos. Son alcances distintos y no deben mezclarse en una misma conclusión de rendimiento.

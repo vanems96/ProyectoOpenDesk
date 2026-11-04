@@ -1,5 +1,12 @@
 # Changelog
 
+## Sin versión nueva · 03/11/2026
+
+- Medición del flujo publicado por HTTPS: cinco recorridos, 27 peticiones por recorrido y 78 comprobaciones aprobadas; mediana total de 4,718 s.
+- Muestras originales, medianas en segundos e informe PDF; cola desde MongoDB 0,202 s y desde Redis 0,171 s, sin extrapolar a renderizado o concurrencia.
+- Ejecutores HTTP con credenciales por entorno y autorización explícita para datos sintéticos; los cinco tickets creados quedaron cerrados.
+- Presentación final de 14 diapositivas actualizada con las evidencias HTTPS y gráfico editable. Se conservan el borrador S4 y las mediciones internas históricas.
+
 ## v0.9.0 23/10/2026 Release candidate
 
 - Instalación desde cero con Docker Compose, PHP 8.3, MongoDB 7 y Redis 7.

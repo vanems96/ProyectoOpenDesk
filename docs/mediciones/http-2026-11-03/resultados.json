@@ -1,0 +1,2290 @@
+{
+  "date_cr": "2026-11-03T19:31:29.540999-06:00",
+  "url": "https://grupo3.crnube.org/Opendesk/",
+  "run_id": "20261103-193100",
+  "method": "Serial HTTPS from client to published application, full response body, persistent connection per account. Includes network and server; excludes browser rendering and human time. No concurrent load or forced service outage.",
+  "run_count": 5,
+  "runs": [
+    {
+      "run": 1,
+      "ticket_id": "qa-completa-20261103-193100-1",
+      "final_status": "Resuelto",
+      "rating": 4,
+      "http_requests": 27,
+      "sum_http_seconds": 4.7134986,
+      "full_cycle_seconds": 4.7180942,
+      "queue_sources": [
+        "MongoDB",
+        "Redis"
+      ]
+    },
+    {
+      "run": 2,
+      "ticket_id": "qa-completa-20261103-193100-2",
+      "final_status": "Resuelto",
+      "rating": 4,
+      "http_requests": 27,
+      "sum_http_seconds": 4.9339861,
+      "full_cycle_seconds": 4.9389263,
+      "queue_sources": [
+        "MongoDB",
+        "Redis"
+      ]
+    },
+    {
+      "run": 3,
+      "ticket_id": "qa-completa-20261103-193100-3",
+      "final_status": "Resuelto",
+      "rating": 4,
+      "http_requests": 27,
+      "sum_http_seconds": 4.5233659,
+      "full_cycle_seconds": 4.528431,
+      "queue_sources": [
+        "MongoDB",
+        "Redis"
+      ]
+    },
+    {
+      "run": 4,
+      "ticket_id": "qa-completa-20261103-193100-4",
+      "final_status": "Resuelto",
+      "rating": 4,
+      "http_requests": 27,
+      "sum_http_seconds": 4.6909625,
+      "full_cycle_seconds": 4.6953576,
+      "queue_sources": [
+        "MongoDB",
+        "Redis"
+      ]
+    },
+    {
+      "run": 5,
+      "ticket_id": "qa-completa-20261103-193100-5",
+      "final_status": "Resuelto",
+      "rating": 4,
+      "http_requests": 27,
+      "sum_http_seconds": 5.3420555,
+      "full_cycle_seconds": 5.3468505,
+      "queue_sources": [
+        "MongoDB",
+        "Redis"
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "run": 0,
+      "operation": "Preparar sesión administrador",
+      "role": "administrador",
+      "method": "GET",
+      "path": "session",
+      "seconds": 1.1589557,
+      "status": 200,
+      "bytes": 111
+    },
+    {
+      "run": 0,
+      "operation": "Iniciar sesión administrador",
+      "role": "administrador",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2423514,
+      "status": 200,
+      "bytes": 313
+    },
+    {
+      "run": 0,
+      "operation": "Preparar sesión cliente",
+      "role": "cliente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.4633373,
+      "status": 200,
+      "bytes": 111
+    },
+    {
+      "run": 0,
+      "operation": "Iniciar sesión cliente",
+      "role": "cliente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2398919,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 0,
+      "operation": "Preparar sesión agente",
+      "role": "agente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.5594007,
+      "status": 200,
+      "bytes": 111
+    },
+    {
+      "run": 0,
+      "operation": "Iniciar sesión agente",
+      "role": "agente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2052428,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 0,
+      "operation": "Preparar sesión cliente",
+      "role": "cliente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.5055062,
+      "status": 200,
+      "bytes": 111
+    },
+    {
+      "run": 0,
+      "operation": "Iniciar sesión cliente",
+      "role": "cliente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2099303,
+      "status": 200,
+      "bytes": 369
+    },
+    {
+      "run": 0,
+      "operation": "GET health",
+      "role": "administrador",
+      "method": "GET",
+      "path": "health",
+      "seconds": 0.2029498,
+      "status": 200,
+      "bytes": 45
+    },
+    {
+      "run": 0,
+      "operation": "GET tickets",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets",
+      "seconds": 0.5656467,
+      "status": 200,
+      "bytes": 68623
+    },
+    {
+      "run": 1,
+      "operation": "Preparar sesión cliente",
+      "role": "cliente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1476641,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 1,
+      "operation": "Iniciar sesión cliente",
+      "role": "cliente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2074226,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 1,
+      "operation": "Preparar sesión administrador",
+      "role": "administrador",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1418873,
+      "status": 200,
+      "bytes": 342
+    },
+    {
+      "run": 1,
+      "operation": "Iniciar sesión administrador",
+      "role": "administrador",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2070931,
+      "status": 200,
+      "bytes": 313
+    },
+    {
+      "run": 1,
+      "operation": "Preparar sesión agente",
+      "role": "agente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.140363,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 1,
+      "operation": "Iniciar sesión agente",
+      "role": "agente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2267138,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 1,
+      "operation": "Listar tickets",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets",
+      "seconds": 0.4890851,
+      "status": 200,
+      "bytes": 68623
+    },
+    {
+      "run": 1,
+      "operation": "Crear ticket",
+      "role": "cliente",
+      "method": "POST",
+      "path": "tickets",
+      "seconds": 0.2261328,
+      "status": 201,
+      "bytes": 719
+    },
+    {
+      "run": 1,
+      "operation": "Cola tras invalidación (MongoDB)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1402974,
+      "status": 200,
+      "bytes": 750
+    },
+    {
+      "run": 1,
+      "operation": "Cola repetida (Redis)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1673715,
+      "status": 200,
+      "bytes": 770
+    },
+    {
+      "run": 1,
+      "operation": "Acceso de otro cliente rechazado",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1449937,
+      "status": 404,
+      "bytes": 33
+    },
+    {
+      "run": 1,
+      "operation": "Asignación por cliente rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1634575,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 1,
+      "operation": "Asignar empleado",
+      "role": "administrador",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1472986,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 1,
+      "operation": "Consultar caso asignado",
+      "role": "agente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1385938,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 1,
+      "operation": "Guardar nota privada",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1452869,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 1,
+      "operation": "Verificar privacidad de nota",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1680966,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 1,
+      "operation": "Responder al cliente",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1691811,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 1,
+      "operation": "Cliente responde",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1467594,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 1,
+      "operation": "Proponer solución",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1436763,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 1,
+      "operation": "Consultar solución propuesta",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1457162,
+      "status": 200,
+      "bytes": 1868
+    },
+    {
+      "run": 1,
+      "operation": "Calificación inválida rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1404064,
+      "status": 422,
+      "bytes": 31
+    },
+    {
+      "run": 1,
+      "operation": "Confirmar cierre y valorar",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1884375,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 1,
+      "operation": "Verificar cierre persistente",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-1",
+      "seconds": 0.1793562,
+      "status": 200,
+      "bytes": 2543
+    },
+    {
+      "run": 1,
+      "operation": "Verificar invalidación al cerrar",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1626645,
+      "status": 200,
+      "bytes": 31
+    },
+    {
+      "run": 1,
+      "operation": "Acceso del empleado a usuarios rechazado",
+      "role": "agente",
+      "method": "GET",
+      "path": "users",
+      "seconds": 0.142359,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 1,
+      "operation": "Consultar notificaciones",
+      "role": "cliente",
+      "method": "GET",
+      "path": "notifications",
+      "seconds": 0.1534274,
+      "status": 200,
+      "bytes": 5796
+    },
+    {
+      "run": 1,
+      "operation": "Consultar reportes",
+      "role": "administrador",
+      "method": "GET",
+      "path": "reports",
+      "seconds": 0.1397568,
+      "status": 200,
+      "bytes": 97
+    },
+    {
+      "run": 2,
+      "operation": "Preparar sesión cliente",
+      "role": "cliente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1398609,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 2,
+      "operation": "Iniciar sesión cliente",
+      "role": "cliente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2066426,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 2,
+      "operation": "Preparar sesión administrador",
+      "role": "administrador",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1674512,
+      "status": 200,
+      "bytes": 342
+    },
+    {
+      "run": 2,
+      "operation": "Iniciar sesión administrador",
+      "role": "administrador",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2081779,
+      "status": 200,
+      "bytes": 313
+    },
+    {
+      "run": 2,
+      "operation": "Preparar sesión agente",
+      "role": "agente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1392168,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 2,
+      "operation": "Iniciar sesión agente",
+      "role": "agente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2031845,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 2,
+      "operation": "Listar tickets",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets",
+      "seconds": 0.4420861,
+      "status": 200,
+      "bytes": 71167
+    },
+    {
+      "run": 2,
+      "operation": "Crear ticket",
+      "role": "cliente",
+      "method": "POST",
+      "path": "tickets",
+      "seconds": 0.1679024,
+      "status": 201,
+      "bytes": 719
+    },
+    {
+      "run": 2,
+      "operation": "Cola tras invalidación (MongoDB)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.2059807,
+      "status": 200,
+      "bytes": 750
+    },
+    {
+      "run": 2,
+      "operation": "Cola repetida (Redis)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1713037,
+      "status": 200,
+      "bytes": 770
+    },
+    {
+      "run": 2,
+      "operation": "Acceso de otro cliente rechazado",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1417459,
+      "status": 404,
+      "bytes": 33
+    },
+    {
+      "run": 2,
+      "operation": "Asignación por cliente rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1426951,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 2,
+      "operation": "Asignar empleado",
+      "role": "administrador",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1468788,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 2,
+      "operation": "Consultar caso asignado",
+      "role": "agente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.2138521,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 2,
+      "operation": "Guardar nota privada",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1612519,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 2,
+      "operation": "Verificar privacidad de nota",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.2487861,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 2,
+      "operation": "Responder al cliente",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.2092565,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 2,
+      "operation": "Cliente responde",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.178863,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 2,
+      "operation": "Proponer solución",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1522738,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 2,
+      "operation": "Consultar solución propuesta",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1490886,
+      "status": 200,
+      "bytes": 1868
+    },
+    {
+      "run": 2,
+      "operation": "Calificación inválida rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.2303704,
+      "status": 422,
+      "bytes": 31
+    },
+    {
+      "run": 2,
+      "operation": "Confirmar cierre y valorar",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1510276,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 2,
+      "operation": "Verificar cierre persistente",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-2",
+      "seconds": 0.1569853,
+      "status": 200,
+      "bytes": 2543
+    },
+    {
+      "run": 2,
+      "operation": "Verificar invalidación al cerrar",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1649961,
+      "status": 200,
+      "bytes": 31
+    },
+    {
+      "run": 2,
+      "operation": "Acceso del empleado a usuarios rechazado",
+      "role": "agente",
+      "method": "GET",
+      "path": "users",
+      "seconds": 0.1405721,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 2,
+      "operation": "Consultar notificaciones",
+      "role": "cliente",
+      "method": "GET",
+      "path": "notifications",
+      "seconds": 0.1520714,
+      "status": 200,
+      "bytes": 6759
+    },
+    {
+      "run": 2,
+      "operation": "Consultar reportes",
+      "role": "administrador",
+      "method": "GET",
+      "path": "reports",
+      "seconds": 0.1414646,
+      "status": 200,
+      "bytes": 97
+    },
+    {
+      "run": 3,
+      "operation": "Preparar sesión cliente",
+      "role": "cliente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1449395,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 3,
+      "operation": "Iniciar sesión cliente",
+      "role": "cliente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2259487,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 3,
+      "operation": "Preparar sesión administrador",
+      "role": "administrador",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1613581,
+      "status": 200,
+      "bytes": 342
+    },
+    {
+      "run": 3,
+      "operation": "Iniciar sesión administrador",
+      "role": "administrador",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2094471,
+      "status": 200,
+      "bytes": 313
+    },
+    {
+      "run": 3,
+      "operation": "Preparar sesión agente",
+      "role": "agente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1435325,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 3,
+      "operation": "Iniciar sesión agente",
+      "role": "agente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.1993489,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 3,
+      "operation": "Listar tickets",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets",
+      "seconds": 0.42388,
+      "status": 200,
+      "bytes": 73711
+    },
+    {
+      "run": 3,
+      "operation": "Crear ticket",
+      "role": "cliente",
+      "method": "POST",
+      "path": "tickets",
+      "seconds": 0.1448866,
+      "status": 201,
+      "bytes": 719
+    },
+    {
+      "run": 3,
+      "operation": "Cola tras invalidación (MongoDB)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1415689,
+      "status": 200,
+      "bytes": 750
+    },
+    {
+      "run": 3,
+      "operation": "Cola repetida (Redis)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1710074,
+      "status": 200,
+      "bytes": 770
+    },
+    {
+      "run": 3,
+      "operation": "Acceso de otro cliente rechazado",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1602832,
+      "status": 404,
+      "bytes": 33
+    },
+    {
+      "run": 3,
+      "operation": "Asignación por cliente rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1458713,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 3,
+      "operation": "Asignar empleado",
+      "role": "administrador",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1530095,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 3,
+      "operation": "Consultar caso asignado",
+      "role": "agente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1548961,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 3,
+      "operation": "Guardar nota privada",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1403094,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 3,
+      "operation": "Verificar privacidad de nota",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1592065,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 3,
+      "operation": "Responder al cliente",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1569609,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 3,
+      "operation": "Cliente responde",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1463572,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 3,
+      "operation": "Proponer solución",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1416149,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 3,
+      "operation": "Consultar solución propuesta",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1637407,
+      "status": 200,
+      "bytes": 1868
+    },
+    {
+      "run": 3,
+      "operation": "Calificación inválida rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1464171,
+      "status": 422,
+      "bytes": 31
+    },
+    {
+      "run": 3,
+      "operation": "Confirmar cierre y valorar",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1451415,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 3,
+      "operation": "Verificar cierre persistente",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-3",
+      "seconds": 0.1466348,
+      "status": 200,
+      "bytes": 2543
+    },
+    {
+      "run": 3,
+      "operation": "Verificar invalidación al cerrar",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1427515,
+      "status": 200,
+      "bytes": 31
+    },
+    {
+      "run": 3,
+      "operation": "Acceso del empleado a usuarios rechazado",
+      "role": "agente",
+      "method": "GET",
+      "path": "users",
+      "seconds": 0.1394055,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 3,
+      "operation": "Consultar notificaciones",
+      "role": "cliente",
+      "method": "GET",
+      "path": "notifications",
+      "seconds": 0.1690452,
+      "status": 200,
+      "bytes": 7722
+    },
+    {
+      "run": 3,
+      "operation": "Consultar reportes",
+      "role": "administrador",
+      "method": "GET",
+      "path": "reports",
+      "seconds": 0.1458029,
+      "status": 200,
+      "bytes": 97
+    },
+    {
+      "run": 4,
+      "operation": "Preparar sesión cliente",
+      "role": "cliente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1853725,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 4,
+      "operation": "Iniciar sesión cliente",
+      "role": "cliente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2068131,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 4,
+      "operation": "Preparar sesión administrador",
+      "role": "administrador",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1622888,
+      "status": 200,
+      "bytes": 342
+    },
+    {
+      "run": 4,
+      "operation": "Iniciar sesión administrador",
+      "role": "administrador",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2489992,
+      "status": 200,
+      "bytes": 313
+    },
+    {
+      "run": 4,
+      "operation": "Preparar sesión agente",
+      "role": "agente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1431743,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 4,
+      "operation": "Iniciar sesión agente",
+      "role": "agente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2024457,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 4,
+      "operation": "Listar tickets",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets",
+      "seconds": 0.432617,
+      "status": 200,
+      "bytes": 76255
+    },
+    {
+      "run": 4,
+      "operation": "Crear ticket",
+      "role": "cliente",
+      "method": "POST",
+      "path": "tickets",
+      "seconds": 0.246544,
+      "status": 201,
+      "bytes": 719
+    },
+    {
+      "run": 4,
+      "operation": "Cola tras invalidación (MongoDB)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.2021023,
+      "status": 200,
+      "bytes": 750
+    },
+    {
+      "run": 4,
+      "operation": "Cola repetida (Redis)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1439606,
+      "status": 200,
+      "bytes": 770
+    },
+    {
+      "run": 4,
+      "operation": "Acceso de otro cliente rechazado",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1413411,
+      "status": 404,
+      "bytes": 33
+    },
+    {
+      "run": 4,
+      "operation": "Asignación por cliente rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1482346,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 4,
+      "operation": "Asignar empleado",
+      "role": "administrador",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1422404,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 4,
+      "operation": "Consultar caso asignado",
+      "role": "agente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1402265,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 4,
+      "operation": "Guardar nota privada",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1455033,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 4,
+      "operation": "Verificar privacidad de nota",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1434639,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 4,
+      "operation": "Responder al cliente",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1447958,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 4,
+      "operation": "Cliente responde",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1457486,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 4,
+      "operation": "Proponer solución",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1441769,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 4,
+      "operation": "Consultar solución propuesta",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1629828,
+      "status": 200,
+      "bytes": 1868
+    },
+    {
+      "run": 4,
+      "operation": "Calificación inválida rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1417595,
+      "status": 422,
+      "bytes": 31
+    },
+    {
+      "run": 4,
+      "operation": "Confirmar cierre y valorar",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1462501,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 4,
+      "operation": "Verificar cierre persistente",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-4",
+      "seconds": 0.1557142,
+      "status": 200,
+      "bytes": 2543
+    },
+    {
+      "run": 4,
+      "operation": "Verificar invalidación al cerrar",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1575032,
+      "status": 200,
+      "bytes": 31
+    },
+    {
+      "run": 4,
+      "operation": "Acceso del empleado a usuarios rechazado",
+      "role": "agente",
+      "method": "GET",
+      "path": "users",
+      "seconds": 0.1410184,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 4,
+      "operation": "Consultar notificaciones",
+      "role": "cliente",
+      "method": "GET",
+      "path": "notifications",
+      "seconds": 0.1509013,
+      "status": 200,
+      "bytes": 8685
+    },
+    {
+      "run": 4,
+      "operation": "Consultar reportes",
+      "role": "administrador",
+      "method": "GET",
+      "path": "reports",
+      "seconds": 0.1647844,
+      "status": 200,
+      "bytes": 97
+    },
+    {
+      "run": 5,
+      "operation": "Preparar sesión cliente",
+      "role": "cliente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1466972,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 5,
+      "operation": "Iniciar sesión cliente",
+      "role": "cliente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2273693,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 5,
+      "operation": "Preparar sesión administrador",
+      "role": "administrador",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1399408,
+      "status": 200,
+      "bytes": 342
+    },
+    {
+      "run": 5,
+      "operation": "Iniciar sesión administrador",
+      "role": "administrador",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2045978,
+      "status": 200,
+      "bytes": 313
+    },
+    {
+      "run": 5,
+      "operation": "Preparar sesión agente",
+      "role": "agente",
+      "method": "GET",
+      "path": "session",
+      "seconds": 0.1551163,
+      "status": 200,
+      "bytes": 396
+    },
+    {
+      "run": 5,
+      "operation": "Iniciar sesión agente",
+      "role": "agente",
+      "method": "POST",
+      "path": "login",
+      "seconds": 0.2401016,
+      "status": 200,
+      "bytes": 367
+    },
+    {
+      "run": 5,
+      "operation": "Listar tickets",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets",
+      "seconds": 0.4531474,
+      "status": 200,
+      "bytes": 78799
+    },
+    {
+      "run": 5,
+      "operation": "Crear ticket",
+      "role": "cliente",
+      "method": "POST",
+      "path": "tickets",
+      "seconds": 0.1469259,
+      "status": 201,
+      "bytes": 719
+    },
+    {
+      "run": 5,
+      "operation": "Cola tras invalidación (MongoDB)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.2248646,
+      "status": 200,
+      "bytes": 750
+    },
+    {
+      "run": 5,
+      "operation": "Cola repetida (Redis)",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.2045964,
+      "status": 200,
+      "bytes": 770
+    },
+    {
+      "run": 5,
+      "operation": "Acceso de otro cliente rechazado",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1413354,
+      "status": 404,
+      "bytes": 33
+    },
+    {
+      "run": 5,
+      "operation": "Asignación por cliente rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.5538535,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 5,
+      "operation": "Asignar empleado",
+      "role": "administrador",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1460091,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 5,
+      "operation": "Consultar caso asignado",
+      "role": "agente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1860304,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 5,
+      "operation": "Guardar nota privada",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1426807,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 5,
+      "operation": "Verificar privacidad de nota",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1458471,
+      "status": 200,
+      "bytes": 1003
+    },
+    {
+      "run": 5,
+      "operation": "Responder al cliente",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1449865,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 5,
+      "operation": "Cliente responde",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1495631,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 5,
+      "operation": "Proponer solución",
+      "role": "agente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1460158,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 5,
+      "operation": "Consultar solución propuesta",
+      "role": "cliente",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1457585,
+      "status": 200,
+      "bytes": 1868
+    },
+    {
+      "run": 5,
+      "operation": "Calificación inválida rechazada",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1416825,
+      "status": 422,
+      "bytes": 31
+    },
+    {
+      "run": 5,
+      "operation": "Confirmar cierre y valorar",
+      "role": "cliente",
+      "method": "PATCH",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.2090995,
+      "status": 200,
+      "bytes": 11
+    },
+    {
+      "run": 5,
+      "operation": "Verificar cierre persistente",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets/qa-completa-20261103-193100-5",
+      "seconds": 0.1453099,
+      "status": 200,
+      "bytes": 2543
+    },
+    {
+      "run": 5,
+      "operation": "Verificar invalidación al cerrar",
+      "role": "administrador",
+      "method": "GET",
+      "path": "queue",
+      "seconds": 0.1614986,
+      "status": 200,
+      "bytes": 31
+    },
+    {
+      "run": 5,
+      "operation": "Acceso del empleado a usuarios rechazado",
+      "role": "agente",
+      "method": "GET",
+      "path": "users",
+      "seconds": 0.2041553,
+      "status": 403,
+      "bytes": 50
+    },
+    {
+      "run": 5,
+      "operation": "Consultar notificaciones",
+      "role": "cliente",
+      "method": "GET",
+      "path": "notifications",
+      "seconds": 0.2945988,
+      "status": 200,
+      "bytes": 9648
+    },
+    {
+      "run": 5,
+      "operation": "Consultar reportes",
+      "role": "administrador",
+      "method": "GET",
+      "path": "reports",
+      "seconds": 0.1402735,
+      "status": 200,
+      "bytes": 97
+    },
+    {
+      "run": 0,
+      "operation": "GET tickets",
+      "role": "administrador",
+      "method": "GET",
+      "path": "tickets",
+      "seconds": 0.5142466,
+      "status": 200,
+      "bytes": 81343
+    }
+  ],
+  "summary": {
+    "Preparar sesión cliente": {
+      "n": 5,
+      "median_seconds": 0.1466972,
+      "min_seconds": 0.1398609,
+      "max_seconds": 0.1853725,
+      "samples_seconds": [
+        0.1476641,
+        0.1398609,
+        0.1449395,
+        0.1853725,
+        0.1466972
+      ]
+    },
+    "Iniciar sesión cliente": {
+      "n": 5,
+      "median_seconds": 0.2074226,
+      "min_seconds": 0.2066426,
+      "max_seconds": 0.2273693,
+      "samples_seconds": [
+        0.2074226,
+        0.2066426,
+        0.2259487,
+        0.2068131,
+        0.2273693
+      ]
+    },
+    "Preparar sesión administrador": {
+      "n": 5,
+      "median_seconds": 0.1613581,
+      "min_seconds": 0.1399408,
+      "max_seconds": 0.1674512,
+      "samples_seconds": [
+        0.1418873,
+        0.1674512,
+        0.1613581,
+        0.1622888,
+        0.1399408
+      ]
+    },
+    "Iniciar sesión administrador": {
+      "n": 5,
+      "median_seconds": 0.2081779,
+      "min_seconds": 0.2045978,
+      "max_seconds": 0.2489992,
+      "samples_seconds": [
+        0.2070931,
+        0.2081779,
+        0.2094471,
+        0.2489992,
+        0.2045978
+      ]
+    },
+    "Preparar sesión agente": {
+      "n": 5,
+      "median_seconds": 0.1431743,
+      "min_seconds": 0.1392168,
+      "max_seconds": 0.1551163,
+      "samples_seconds": [
+        0.140363,
+        0.1392168,
+        0.1435325,
+        0.1431743,
+        0.1551163
+      ]
+    },
+    "Iniciar sesión agente": {
+      "n": 5,
+      "median_seconds": 0.2031845,
+      "min_seconds": 0.1993489,
+      "max_seconds": 0.2401016,
+      "samples_seconds": [
+        0.2267138,
+        0.2031845,
+        0.1993489,
+        0.2024457,
+        0.2401016
+      ]
+    },
+    "Listar tickets": {
+      "n": 5,
+      "median_seconds": 0.4420861,
+      "min_seconds": 0.42388,
+      "max_seconds": 0.4890851,
+      "samples_seconds": [
+        0.4890851,
+        0.4420861,
+        0.42388,
+        0.432617,
+        0.4531474
+      ]
+    },
+    "Crear ticket": {
+      "n": 5,
+      "median_seconds": 0.1679024,
+      "min_seconds": 0.1448866,
+      "max_seconds": 0.246544,
+      "samples_seconds": [
+        0.2261328,
+        0.1679024,
+        0.1448866,
+        0.246544,
+        0.1469259
+      ]
+    },
+    "Cola tras invalidación (MongoDB)": {
+      "n": 5,
+      "median_seconds": 0.2021023,
+      "min_seconds": 0.1402974,
+      "max_seconds": 0.2248646,
+      "samples_seconds": [
+        0.1402974,
+        0.2059807,
+        0.1415689,
+        0.2021023,
+        0.2248646
+      ]
+    },
+    "Cola repetida (Redis)": {
+      "n": 5,
+      "median_seconds": 0.1710074,
+      "min_seconds": 0.1439606,
+      "max_seconds": 0.2045964,
+      "samples_seconds": [
+        0.1673715,
+        0.1713037,
+        0.1710074,
+        0.1439606,
+        0.2045964
+      ]
+    },
+    "Acceso de otro cliente rechazado": {
+      "n": 5,
+      "median_seconds": 0.1417459,
+      "min_seconds": 0.1413354,
+      "max_seconds": 0.1602832,
+      "samples_seconds": [
+        0.1449937,
+        0.1417459,
+        0.1602832,
+        0.1413411,
+        0.1413354
+      ]
+    },
+    "Asignación por cliente rechazada": {
+      "n": 5,
+      "median_seconds": 0.1482346,
+      "min_seconds": 0.1426951,
+      "max_seconds": 0.5538535,
+      "samples_seconds": [
+        0.1634575,
+        0.1426951,
+        0.1458713,
+        0.1482346,
+        0.5538535
+      ]
+    },
+    "Asignar empleado": {
+      "n": 5,
+      "median_seconds": 0.1468788,
+      "min_seconds": 0.1422404,
+      "max_seconds": 0.1530095,
+      "samples_seconds": [
+        0.1472986,
+        0.1468788,
+        0.1530095,
+        0.1422404,
+        0.1460091
+      ]
+    },
+    "Consultar caso asignado": {
+      "n": 5,
+      "median_seconds": 0.1548961,
+      "min_seconds": 0.1385938,
+      "max_seconds": 0.2138521,
+      "samples_seconds": [
+        0.1385938,
+        0.2138521,
+        0.1548961,
+        0.1402265,
+        0.1860304
+      ]
+    },
+    "Guardar nota privada": {
+      "n": 5,
+      "median_seconds": 0.1452869,
+      "min_seconds": 0.1403094,
+      "max_seconds": 0.1612519,
+      "samples_seconds": [
+        0.1452869,
+        0.1612519,
+        0.1403094,
+        0.1455033,
+        0.1426807
+      ]
+    },
+    "Verificar privacidad de nota": {
+      "n": 5,
+      "median_seconds": 0.1592065,
+      "min_seconds": 0.1434639,
+      "max_seconds": 0.2487861,
+      "samples_seconds": [
+        0.1680966,
+        0.2487861,
+        0.1592065,
+        0.1434639,
+        0.1458471
+      ]
+    },
+    "Responder al cliente": {
+      "n": 5,
+      "median_seconds": 0.1569609,
+      "min_seconds": 0.1447958,
+      "max_seconds": 0.2092565,
+      "samples_seconds": [
+        0.1691811,
+        0.2092565,
+        0.1569609,
+        0.1447958,
+        0.1449865
+      ]
+    },
+    "Cliente responde": {
+      "n": 5,
+      "median_seconds": 0.1467594,
+      "min_seconds": 0.1457486,
+      "max_seconds": 0.178863,
+      "samples_seconds": [
+        0.1467594,
+        0.178863,
+        0.1463572,
+        0.1457486,
+        0.1495631
+      ]
+    },
+    "Proponer solución": {
+      "n": 5,
+      "median_seconds": 0.1441769,
+      "min_seconds": 0.1416149,
+      "max_seconds": 0.1522738,
+      "samples_seconds": [
+        0.1436763,
+        0.1522738,
+        0.1416149,
+        0.1441769,
+        0.1460158
+      ]
+    },
+    "Consultar solución propuesta": {
+      "n": 5,
+      "median_seconds": 0.1490886,
+      "min_seconds": 0.1457162,
+      "max_seconds": 0.1637407,
+      "samples_seconds": [
+        0.1457162,
+        0.1490886,
+        0.1637407,
+        0.1629828,
+        0.1457585
+      ]
+    },
+    "Calificación inválida rechazada": {
+      "n": 5,
+      "median_seconds": 0.1417595,
+      "min_seconds": 0.1404064,
+      "max_seconds": 0.2303704,
+      "samples_seconds": [
+        0.1404064,
+        0.2303704,
+        0.1464171,
+        0.1417595,
+        0.1416825
+      ]
+    },
+    "Confirmar cierre y valorar": {
+      "n": 5,
+      "median_seconds": 0.1510276,
+      "min_seconds": 0.1451415,
+      "max_seconds": 0.2090995,
+      "samples_seconds": [
+        0.1884375,
+        0.1510276,
+        0.1451415,
+        0.1462501,
+        0.2090995
+      ]
+    },
+    "Verificar cierre persistente": {
+      "n": 5,
+      "median_seconds": 0.1557142,
+      "min_seconds": 0.1453099,
+      "max_seconds": 0.1793562,
+      "samples_seconds": [
+        0.1793562,
+        0.1569853,
+        0.1466348,
+        0.1557142,
+        0.1453099
+      ]
+    },
+    "Verificar invalidación al cerrar": {
+      "n": 5,
+      "median_seconds": 0.1614986,
+      "min_seconds": 0.1427515,
+      "max_seconds": 0.1649961,
+      "samples_seconds": [
+        0.1626645,
+        0.1649961,
+        0.1427515,
+        0.1575032,
+        0.1614986
+      ]
+    },
+    "Acceso del empleado a usuarios rechazado": {
+      "n": 5,
+      "median_seconds": 0.1410184,
+      "min_seconds": 0.1394055,
+      "max_seconds": 0.2041553,
+      "samples_seconds": [
+        0.142359,
+        0.1405721,
+        0.1394055,
+        0.1410184,
+        0.2041553
+      ]
+    },
+    "Consultar notificaciones": {
+      "n": 5,
+      "median_seconds": 0.1534274,
+      "min_seconds": 0.1509013,
+      "max_seconds": 0.2945988,
+      "samples_seconds": [
+        0.1534274,
+        0.1520714,
+        0.1690452,
+        0.1509013,
+        0.2945988
+      ]
+    },
+    "Consultar reportes": {
+      "n": 5,
+      "median_seconds": 0.1414646,
+      "min_seconds": 0.1397568,
+      "max_seconds": 0.1647844,
+      "samples_seconds": [
+        0.1397568,
+        0.1414646,
+        0.1458029,
+        0.1647844,
+        0.1402735
+      ]
+    }
+  },
+  "checks": [
+    {
+      "run": 0,
+      "check": "Autenticación y rol administrador",
+      "passed": true
+    },
+    {
+      "run": 0,
+      "check": "Autenticación y rol cliente",
+      "passed": true
+    },
+    {
+      "run": 0,
+      "check": "Autenticación y rol agente",
+      "passed": true
+    },
+    {
+      "run": 0,
+      "check": "Autenticación y rol cliente",
+      "passed": true
+    },
+    {
+      "run": 0,
+      "check": "MongoDB local y Redis disponibles",
+      "passed": true
+    },
+    {
+      "run": 0,
+      "check": "Empleado pertenece al departamento de Reclamos",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Autenticación y rol cliente",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Autenticación y rol administrador",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Autenticación y rol agente",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Ticket creado y pendiente de atención",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Caché: MongoDB primero, Redis después",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Ticket nuevo visible en cola Redis",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Asignación persistente y visible para empleado",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Cliente no ve la nota interna",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Propuesta requiere confirmación del cliente",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Cierre y valoración guardados en consulta posterior",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Administrador conserva historial privado",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Ticket cerrado retirado de la cola",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Notificaciones del caso disponibles al cliente",
+      "passed": true
+    },
+    {
+      "run": 1,
+      "check": "Reporte incluye casos resueltos",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Autenticación y rol cliente",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Autenticación y rol administrador",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Autenticación y rol agente",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Ticket creado y pendiente de atención",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Caché: MongoDB primero, Redis después",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Ticket nuevo visible en cola Redis",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Asignación persistente y visible para empleado",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Cliente no ve la nota interna",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Propuesta requiere confirmación del cliente",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Cierre y valoración guardados en consulta posterior",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Administrador conserva historial privado",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Ticket cerrado retirado de la cola",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Notificaciones del caso disponibles al cliente",
+      "passed": true
+    },
+    {
+      "run": 2,
+      "check": "Reporte incluye casos resueltos",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Autenticación y rol cliente",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Autenticación y rol administrador",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Autenticación y rol agente",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Ticket creado y pendiente de atención",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Caché: MongoDB primero, Redis después",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Ticket nuevo visible en cola Redis",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Asignación persistente y visible para empleado",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Cliente no ve la nota interna",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Propuesta requiere confirmación del cliente",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Cierre y valoración guardados en consulta posterior",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Administrador conserva historial privado",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Ticket cerrado retirado de la cola",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Notificaciones del caso disponibles al cliente",
+      "passed": true
+    },
+    {
+      "run": 3,
+      "check": "Reporte incluye casos resueltos",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Autenticación y rol cliente",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Autenticación y rol administrador",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Autenticación y rol agente",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Ticket creado y pendiente de atención",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Caché: MongoDB primero, Redis después",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Ticket nuevo visible en cola Redis",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Asignación persistente y visible para empleado",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Cliente no ve la nota interna",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Propuesta requiere confirmación del cliente",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Cierre y valoración guardados en consulta posterior",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Administrador conserva historial privado",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Ticket cerrado retirado de la cola",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Notificaciones del caso disponibles al cliente",
+      "passed": true
+    },
+    {
+      "run": 4,
+      "check": "Reporte incluye casos resueltos",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Autenticación y rol cliente",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Autenticación y rol administrador",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Autenticación y rol agente",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Ticket creado y pendiente de atención",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Caché: MongoDB primero, Redis después",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Ticket nuevo visible en cola Redis",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Asignación persistente y visible para empleado",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Cliente no ve la nota interna",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Propuesta requiere confirmación del cliente",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Cierre y valoración guardados en consulta posterior",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Administrador conserva historial privado",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Ticket cerrado retirado de la cola",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Notificaciones del caso disponibles al cliente",
+      "passed": true
+    },
+    {
+      "run": 5,
+      "check": "Reporte incluye casos resueltos",
+      "passed": true
+    },
+    {
+      "run": 0,
+      "check": "Todos los tickets anteriores se conservan",
+      "passed": true
+    },
+    {
+      "run": 0,
+      "check": "Sin tickets de prueba abiertos al finalizar",
+      "passed": true
+    }
+  ],
+  "error": null,
+  "baseline": {
+    "tickets": 27,
+    "open": 0
+  },
+  "final": {
+    "tickets": 32,
+    "open": 0
+  }
+}

@@ -1,0 +1,7 @@
+# Los documentos y recursos conservan sus bytes en Windows y Linux.
+*.pdf binary
+*.pptx binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
