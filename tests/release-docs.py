@@ -23,3 +23,16 @@ assert proof['httpValidation']['syntheticTicketsAfterRestart']==8
 assert proof['httpValidation']['privateFilesHttp404'] is True
 assert proof['httpValidation']['independentHumanValidation'] is False
 print('S4: archivos, enlaces, ficha, PowerPoint y evidencia de instalación verificados.')
+
+# The technical release must not certify academic activities that did not occur.
+assert (root/'VERSION').read_text().strip()=='1.0.0'
+delivery=json.loads((root/'docs/entrega/estado-v1.0.0.json').read_text(encoding='utf-8'))
+assert delivery['academic_requirements_complete'] is False
+for extension in ['pptx','pdf']:
+ path=root/f'docs/presentacion/OpenDesk_exposicion_final_v1.0.0.{extension}'
+ assert path.is_file() and path.stat().st_size>10000,path
+with zipfile.ZipFile(root/'docs/presentacion/OpenDesk_exposicion_final_v1.0.0.pptx') as z:
+ assert len([n for n in z.namelist() if re.fullmatch(r'ppt/slides/slide[0-9]+.xml',n)])==14
+ assert any(n.endswith('.xlsx') and 'embeddings/' in n for n in z.namelist()),'Gráfico debe conservar libro editable'
+assert (root/'docs/presentacion/OpenDesk_exposicion_final_v1.0.0.pdf').read_bytes().startswith(b'%PDF-')
+print('v1.0.0: versión, presentación editable/PDF y alcance académico explícito verificados.')

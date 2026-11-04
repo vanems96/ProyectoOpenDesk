@@ -27,3 +27,7 @@ Cualquier persona que no haya configurado antes OpenDesk puede realizar esta com
 - Resultado: aprobado / requiere correcciones.
 
 La prueba automatizada de instalación limpia complementa este registro, pero no demuestra que otra persona siguió el README. No se debe firmar ni marcar este documento como aprobado antes de realizar la prueba.
+
+## Actualización del 03/11/2026
+
+El equipo confirmó que un compañero hará esta instalación próximamente. Debe utilizar el tag v1.0.0 y seguir los pasos 1–13 del README. Este registro permanece pendiente hasta su ejecución real. Adjuntar identificación autorizada, fecha, resultados esperados observados, incidencias y capturas sin contraseñas.

@@ -1,6 +1,6 @@
 # Guion de presentación final
 
-Actualizado: 03/11/2026. [Presentación final editable](OpenDesk_exposicion_final_2026-11-03.pptx): 14 diapositivas con notas, gráfico editable y enlaces a la prueba HTTPS. Se conserva el [borrador histórico S4](OpenDesk_presentacion_S4.pptx), de 12 diapositivas. La exposición del docente dura entre veinte y veinticinco minutos, más cinco de preguntas.
+Actualizado: 03/11/2026. [Presentación final editable](OpenDesk_exposicion_final_v1.0.0.pptx): 14 diapositivas con notas, gráfico editable y enlaces a la prueba HTTPS. Se conserva el [borrador histórico S4](OpenDesk_presentacion_S4.pptx), de 12 diapositivas. La exposición del docente dura entre veinte y veinticinco minutos, más cinco de preguntas.
 
 | Bloque | Diapositivas | Tiempo propuesto | Desarrollo |
 |---|---|---|---|
@@ -50,4 +50,4 @@ Crear o elegir cuentas ficticias para administrador, agente y cliente. Preparar 
 
 ## Pendientes declarados
 
-El video no se realiza por solicitud del equipo. La instalación por otra persona sigue pendiente de evidencia humana; la prueba automatizada no se firma en su nombre. Los autores del proyecto figuran en el README y en portal.yml conforme a la lista proporcionada por Joan. El PDF del Aula Virtual y la versión v1.0.0 corresponden a la entrega final, no a este borrador S4.
+El equipo confirmó el 03/11/2026 que no hay video. La instalación por otra persona sigue pendiente de evidencia humana; la prueba automatizada no se firma en su nombre. Los autores figuran en el README y portal.yml. La versión técnica v1.0.0 incluye la presentación final y el PDF del Aula se entrega por separado, con sus cuentas de prueba. La publicación no acredita los dos requisitos académicos pendientes.
