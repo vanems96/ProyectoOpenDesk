@@ -1,0 +1,47 @@
+{
+  "method": "New HTTPS connection each run; complete HTML and logo downloads. Includes DNS/TLS/network/server. Excludes browser JavaScript initialization, API bootstrap and rendering. These values are not page-ready time.",
+  "samples": [
+    {
+      "run": 1,
+      "html_seconds": 0.7653157,
+      "logo_seconds": 1.1152334,
+      "total_seconds": 1.9267689,
+      "html_bytes": 57583,
+      "logo_bytes": 504846
+    },
+    {
+      "run": 2,
+      "html_seconds": 0.7448941,
+      "logo_seconds": 2.1537015,
+      "total_seconds": 2.8986146,
+      "html_bytes": 57583,
+      "logo_bytes": 504846
+    },
+    {
+      "run": 3,
+      "html_seconds": 0.7618676,
+      "logo_seconds": 0.9288561,
+      "total_seconds": 1.6907419,
+      "html_bytes": 57583,
+      "logo_bytes": 504846
+    },
+    {
+      "run": 4,
+      "html_seconds": 0.7324408,
+      "logo_seconds": 0.7495161,
+      "total_seconds": 1.4819739,
+      "html_bytes": 57583,
+      "logo_bytes": 504846
+    },
+    {
+      "run": 5,
+      "html_seconds": 0.7825174,
+      "logo_seconds": 0.7953142,
+      "total_seconds": 1.5778516,
+      "html_bytes": 57583,
+      "logo_bytes": 504846
+    }
+  ],
+  "median_total_seconds": 1.6907419,
+  "median_html_seconds": 0.7618676
+}

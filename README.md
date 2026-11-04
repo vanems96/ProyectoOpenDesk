@@ -202,7 +202,7 @@ Las capturas siguientes corresponden a un entorno de prueba aislado con datos si
 ![Departamentos y equipos](docs/img/equipos.png)
 ![Valoración de atención](docs/img/valoracion.png)
 
-El video no se realiza en esta preparación por solicitud del equipo. Se conserva como requisito pendiente del docente. [Guion y reproducción](docs/demo/README.md). [Borrador editable de presentación](docs/presentacion/OpenDesk_presentacion_S4.pptx).
+El video no se realiza en esta preparación por solicitud del equipo. Se conserva como requisito pendiente del docente. [Guion y reproducción](docs/demo/README.md). [Presentación final con mediciones HTTPS](docs/presentacion/OpenDesk_exposicion_final_2026-11-03.pptx). [Borrador histórico S4](docs/presentacion/OpenDesk_presentacion_S4.pptx).
 
 ## Pruebas y mediciones
 
@@ -215,9 +215,9 @@ php scripts/measure.php 1000 5
 
 Las pruebas de roles usan almacenamiento en memoria. La integración real requiere una base aislada y Redis. GitHub Actions comprueba MongoDB/Redis reales, cliente socket, flujo Chromium y una instalación Docker limpia. Nunca ejecutar pruebas de borrado o bootstrap contra producción.
 
-[Resultados Webmin con tres operaciones y medianas](docs/mediciones/webmin-2026-10-23.md) · [Medición CI separada](docs/mediciones/ci-2026-10-22.md) · [Pruebas](docs/pruebas.md) · [Seguridad](SECURITY.md).
+[Prueba completa HTTPS · 03/11/2026](docs/mediciones/http-2026-11-03/README.md) · [Operaciones internas Webmin · 23/10/2026](docs/mediciones/webmin-2026-10-23.md) · [Medición CI separada](docs/mediciones/ci-2026-10-22.md) · [Pruebas](docs/pruebas.md) · [Seguridad](SECURITY.md).
 
-Las mediciones usan datos sintéticos y no equivalen a carga concurrente ni a tiempos completos de HTTP. El navegador requiere Node.js y Chromium solo para las pruebas, no para usar la aplicación.
+La prueba HTTPS del 03/11/2026 completó cinco recorridos y 78 comprobaciones: mediana de 4,718 s por recorrido automatizado. Incluye red y servidor; excluye tiempo humano, renderizado y concurrencia. Los ensayos internos históricos usan milisegundos y se documentan por separado. El navegador requiere Node.js y Chromium solo para las pruebas, no para usar la aplicación.
 
 ## Estructura y trabajo del equipo
 

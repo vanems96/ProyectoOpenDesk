@@ -1,0 +1,147 @@
+﻿run,operation,role,method,path,seconds,status,bytes
+0,Preparar sesión administrador,administrador,GET,session,1.1589557,200,111
+0,Iniciar sesión administrador,administrador,POST,login,0.2423514,200,313
+0,Preparar sesión cliente,cliente,GET,session,0.4633373,200,111
+0,Iniciar sesión cliente,cliente,POST,login,0.2398919,200,367
+0,Preparar sesión agente,agente,GET,session,0.5594007,200,111
+0,Iniciar sesión agente,agente,POST,login,0.2052428,200,367
+0,Preparar sesión cliente,cliente,GET,session,0.5055062,200,111
+0,Iniciar sesión cliente,cliente,POST,login,0.2099303,200,369
+0,GET health,administrador,GET,health,0.2029498,200,45
+0,GET tickets,administrador,GET,tickets,0.5656467,200,68623
+1,Preparar sesión cliente,cliente,GET,session,0.1476641,200,396
+1,Iniciar sesión cliente,cliente,POST,login,0.2074226,200,367
+1,Preparar sesión administrador,administrador,GET,session,0.1418873,200,342
+1,Iniciar sesión administrador,administrador,POST,login,0.2070931,200,313
+1,Preparar sesión agente,agente,GET,session,0.140363,200,396
+1,Iniciar sesión agente,agente,POST,login,0.2267138,200,367
+1,Listar tickets,administrador,GET,tickets,0.4890851,200,68623
+1,Crear ticket,cliente,POST,tickets,0.2261328,201,719
+1,Cola tras invalidación (MongoDB),administrador,GET,queue,0.1402974,200,750
+1,Cola repetida (Redis),administrador,GET,queue,0.1673715,200,770
+1,Acceso de otro cliente rechazado,cliente,GET,tickets/qa-completa-20261103-193100-1,0.1449937,404,33
+1,Asignación por cliente rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-1,0.1634575,403,50
+1,Asignar empleado,administrador,PATCH,tickets/qa-completa-20261103-193100-1,0.1472986,200,11
+1,Consultar caso asignado,agente,GET,tickets/qa-completa-20261103-193100-1,0.1385938,200,1003
+1,Guardar nota privada,agente,PATCH,tickets/qa-completa-20261103-193100-1,0.1452869,200,11
+1,Verificar privacidad de nota,cliente,GET,tickets/qa-completa-20261103-193100-1,0.1680966,200,1003
+1,Responder al cliente,agente,PATCH,tickets/qa-completa-20261103-193100-1,0.1691811,200,11
+1,Cliente responde,cliente,PATCH,tickets/qa-completa-20261103-193100-1,0.1467594,200,11
+1,Proponer solución,agente,PATCH,tickets/qa-completa-20261103-193100-1,0.1436763,200,11
+1,Consultar solución propuesta,cliente,GET,tickets/qa-completa-20261103-193100-1,0.1457162,200,1868
+1,Calificación inválida rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-1,0.1404064,422,31
+1,Confirmar cierre y valorar,cliente,PATCH,tickets/qa-completa-20261103-193100-1,0.1884375,200,11
+1,Verificar cierre persistente,administrador,GET,tickets/qa-completa-20261103-193100-1,0.1793562,200,2543
+1,Verificar invalidación al cerrar,administrador,GET,queue,0.1626645,200,31
+1,Acceso del empleado a usuarios rechazado,agente,GET,users,0.142359,403,50
+1,Consultar notificaciones,cliente,GET,notifications,0.1534274,200,5796
+1,Consultar reportes,administrador,GET,reports,0.1397568,200,97
+2,Preparar sesión cliente,cliente,GET,session,0.1398609,200,396
+2,Iniciar sesión cliente,cliente,POST,login,0.2066426,200,367
+2,Preparar sesión administrador,administrador,GET,session,0.1674512,200,342
+2,Iniciar sesión administrador,administrador,POST,login,0.2081779,200,313
+2,Preparar sesión agente,agente,GET,session,0.1392168,200,396
+2,Iniciar sesión agente,agente,POST,login,0.2031845,200,367
+2,Listar tickets,administrador,GET,tickets,0.4420861,200,71167
+2,Crear ticket,cliente,POST,tickets,0.1679024,201,719
+2,Cola tras invalidación (MongoDB),administrador,GET,queue,0.2059807,200,750
+2,Cola repetida (Redis),administrador,GET,queue,0.1713037,200,770
+2,Acceso de otro cliente rechazado,cliente,GET,tickets/qa-completa-20261103-193100-2,0.1417459,404,33
+2,Asignación por cliente rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-2,0.1426951,403,50
+2,Asignar empleado,administrador,PATCH,tickets/qa-completa-20261103-193100-2,0.1468788,200,11
+2,Consultar caso asignado,agente,GET,tickets/qa-completa-20261103-193100-2,0.2138521,200,1003
+2,Guardar nota privada,agente,PATCH,tickets/qa-completa-20261103-193100-2,0.1612519,200,11
+2,Verificar privacidad de nota,cliente,GET,tickets/qa-completa-20261103-193100-2,0.2487861,200,1003
+2,Responder al cliente,agente,PATCH,tickets/qa-completa-20261103-193100-2,0.2092565,200,11
+2,Cliente responde,cliente,PATCH,tickets/qa-completa-20261103-193100-2,0.178863,200,11
+2,Proponer solución,agente,PATCH,tickets/qa-completa-20261103-193100-2,0.1522738,200,11
+2,Consultar solución propuesta,cliente,GET,tickets/qa-completa-20261103-193100-2,0.1490886,200,1868
+2,Calificación inválida rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-2,0.2303704,422,31
+2,Confirmar cierre y valorar,cliente,PATCH,tickets/qa-completa-20261103-193100-2,0.1510276,200,11
+2,Verificar cierre persistente,administrador,GET,tickets/qa-completa-20261103-193100-2,0.1569853,200,2543
+2,Verificar invalidación al cerrar,administrador,GET,queue,0.1649961,200,31
+2,Acceso del empleado a usuarios rechazado,agente,GET,users,0.1405721,403,50
+2,Consultar notificaciones,cliente,GET,notifications,0.1520714,200,6759
+2,Consultar reportes,administrador,GET,reports,0.1414646,200,97
+3,Preparar sesión cliente,cliente,GET,session,0.1449395,200,396
+3,Iniciar sesión cliente,cliente,POST,login,0.2259487,200,367
+3,Preparar sesión administrador,administrador,GET,session,0.1613581,200,342
+3,Iniciar sesión administrador,administrador,POST,login,0.2094471,200,313
+3,Preparar sesión agente,agente,GET,session,0.1435325,200,396
+3,Iniciar sesión agente,agente,POST,login,0.1993489,200,367
+3,Listar tickets,administrador,GET,tickets,0.42388,200,73711
+3,Crear ticket,cliente,POST,tickets,0.1448866,201,719
+3,Cola tras invalidación (MongoDB),administrador,GET,queue,0.1415689,200,750
+3,Cola repetida (Redis),administrador,GET,queue,0.1710074,200,770
+3,Acceso de otro cliente rechazado,cliente,GET,tickets/qa-completa-20261103-193100-3,0.1602832,404,33
+3,Asignación por cliente rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-3,0.1458713,403,50
+3,Asignar empleado,administrador,PATCH,tickets/qa-completa-20261103-193100-3,0.1530095,200,11
+3,Consultar caso asignado,agente,GET,tickets/qa-completa-20261103-193100-3,0.1548961,200,1003
+3,Guardar nota privada,agente,PATCH,tickets/qa-completa-20261103-193100-3,0.1403094,200,11
+3,Verificar privacidad de nota,cliente,GET,tickets/qa-completa-20261103-193100-3,0.1592065,200,1003
+3,Responder al cliente,agente,PATCH,tickets/qa-completa-20261103-193100-3,0.1569609,200,11
+3,Cliente responde,cliente,PATCH,tickets/qa-completa-20261103-193100-3,0.1463572,200,11
+3,Proponer solución,agente,PATCH,tickets/qa-completa-20261103-193100-3,0.1416149,200,11
+3,Consultar solución propuesta,cliente,GET,tickets/qa-completa-20261103-193100-3,0.1637407,200,1868
+3,Calificación inválida rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-3,0.1464171,422,31
+3,Confirmar cierre y valorar,cliente,PATCH,tickets/qa-completa-20261103-193100-3,0.1451415,200,11
+3,Verificar cierre persistente,administrador,GET,tickets/qa-completa-20261103-193100-3,0.1466348,200,2543
+3,Verificar invalidación al cerrar,administrador,GET,queue,0.1427515,200,31
+3,Acceso del empleado a usuarios rechazado,agente,GET,users,0.1394055,403,50
+3,Consultar notificaciones,cliente,GET,notifications,0.1690452,200,7722
+3,Consultar reportes,administrador,GET,reports,0.1458029,200,97
+4,Preparar sesión cliente,cliente,GET,session,0.1853725,200,396
+4,Iniciar sesión cliente,cliente,POST,login,0.2068131,200,367
+4,Preparar sesión administrador,administrador,GET,session,0.1622888,200,342
+4,Iniciar sesión administrador,administrador,POST,login,0.2489992,200,313
+4,Preparar sesión agente,agente,GET,session,0.1431743,200,396
+4,Iniciar sesión agente,agente,POST,login,0.2024457,200,367
+4,Listar tickets,administrador,GET,tickets,0.432617,200,76255
+4,Crear ticket,cliente,POST,tickets,0.246544,201,719
+4,Cola tras invalidación (MongoDB),administrador,GET,queue,0.2021023,200,750
+4,Cola repetida (Redis),administrador,GET,queue,0.1439606,200,770
+4,Acceso de otro cliente rechazado,cliente,GET,tickets/qa-completa-20261103-193100-4,0.1413411,404,33
+4,Asignación por cliente rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-4,0.1482346,403,50
+4,Asignar empleado,administrador,PATCH,tickets/qa-completa-20261103-193100-4,0.1422404,200,11
+4,Consultar caso asignado,agente,GET,tickets/qa-completa-20261103-193100-4,0.1402265,200,1003
+4,Guardar nota privada,agente,PATCH,tickets/qa-completa-20261103-193100-4,0.1455033,200,11
+4,Verificar privacidad de nota,cliente,GET,tickets/qa-completa-20261103-193100-4,0.1434639,200,1003
+4,Responder al cliente,agente,PATCH,tickets/qa-completa-20261103-193100-4,0.1447958,200,11
+4,Cliente responde,cliente,PATCH,tickets/qa-completa-20261103-193100-4,0.1457486,200,11
+4,Proponer solución,agente,PATCH,tickets/qa-completa-20261103-193100-4,0.1441769,200,11
+4,Consultar solución propuesta,cliente,GET,tickets/qa-completa-20261103-193100-4,0.1629828,200,1868
+4,Calificación inválida rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-4,0.1417595,422,31
+4,Confirmar cierre y valorar,cliente,PATCH,tickets/qa-completa-20261103-193100-4,0.1462501,200,11
+4,Verificar cierre persistente,administrador,GET,tickets/qa-completa-20261103-193100-4,0.1557142,200,2543
+4,Verificar invalidación al cerrar,administrador,GET,queue,0.1575032,200,31
+4,Acceso del empleado a usuarios rechazado,agente,GET,users,0.1410184,403,50
+4,Consultar notificaciones,cliente,GET,notifications,0.1509013,200,8685
+4,Consultar reportes,administrador,GET,reports,0.1647844,200,97
+5,Preparar sesión cliente,cliente,GET,session,0.1466972,200,396
+5,Iniciar sesión cliente,cliente,POST,login,0.2273693,200,367
+5,Preparar sesión administrador,administrador,GET,session,0.1399408,200,342
+5,Iniciar sesión administrador,administrador,POST,login,0.2045978,200,313
+5,Preparar sesión agente,agente,GET,session,0.1551163,200,396
+5,Iniciar sesión agente,agente,POST,login,0.2401016,200,367
+5,Listar tickets,administrador,GET,tickets,0.4531474,200,78799
+5,Crear ticket,cliente,POST,tickets,0.1469259,201,719
+5,Cola tras invalidación (MongoDB),administrador,GET,queue,0.2248646,200,750
+5,Cola repetida (Redis),administrador,GET,queue,0.2045964,200,770
+5,Acceso de otro cliente rechazado,cliente,GET,tickets/qa-completa-20261103-193100-5,0.1413354,404,33
+5,Asignación por cliente rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-5,0.5538535,403,50
+5,Asignar empleado,administrador,PATCH,tickets/qa-completa-20261103-193100-5,0.1460091,200,11
+5,Consultar caso asignado,agente,GET,tickets/qa-completa-20261103-193100-5,0.1860304,200,1003
+5,Guardar nota privada,agente,PATCH,tickets/qa-completa-20261103-193100-5,0.1426807,200,11
+5,Verificar privacidad de nota,cliente,GET,tickets/qa-completa-20261103-193100-5,0.1458471,200,1003
+5,Responder al cliente,agente,PATCH,tickets/qa-completa-20261103-193100-5,0.1449865,200,11
+5,Cliente responde,cliente,PATCH,tickets/qa-completa-20261103-193100-5,0.1495631,200,11
+5,Proponer solución,agente,PATCH,tickets/qa-completa-20261103-193100-5,0.1460158,200,11
+5,Consultar solución propuesta,cliente,GET,tickets/qa-completa-20261103-193100-5,0.1457585,200,1868
+5,Calificación inválida rechazada,cliente,PATCH,tickets/qa-completa-20261103-193100-5,0.1416825,422,31
+5,Confirmar cierre y valorar,cliente,PATCH,tickets/qa-completa-20261103-193100-5,0.2090995,200,11
+5,Verificar cierre persistente,administrador,GET,tickets/qa-completa-20261103-193100-5,0.1453099,200,2543
+5,Verificar invalidación al cerrar,administrador,GET,queue,0.1614986,200,31
+5,Acceso del empleado a usuarios rechazado,agente,GET,users,0.2041553,403,50
+5,Consultar notificaciones,cliente,GET,notifications,0.2945988,200,9648
+5,Consultar reportes,administrador,GET,reports,0.1402735,200,97
+0,GET tickets,administrador,GET,tickets,0.5142466,200,81343
