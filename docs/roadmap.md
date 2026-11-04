@@ -1,19 +1,19 @@
 # Roadmap
 
-## PrÃ³ximo mes
+## Próximo mes
 
-- Completar la instalaciÃ³n externa con el formulario de validaciÃ³n y registrar sus resultados despuÃ©s del cierre tÃ©cnico v1.0.0.
-- Solicitar al administrador de MongoDB en Webmin la activaciÃ³n nativa de validadores, ademÃ¡s de la validaciÃ³n PHP vigente.
-- Revisar la accesibilidad, los mensajes de error y la paginaciÃ³n para mÃ¡s tickets.
-- Configurar pruebas de respaldo y restauraciÃ³n con datos sintÃ©ticos.
+- Conservar el registro de la instalación externa ya realizada, confirmada por Joan el 04/11/2026; agregar datos y capturas si el equipo los proporciona.
+- Solicitar al administrador de MongoDB en Webmin la activación nativa de validadores, además de la validación PHP vigente.
+- Revisar la accesibilidad, los mensajes de error y la paginación para más tickets.
+- Configurar pruebas de respaldo y restauración con datos sintéticos.
 
-## PrÃ³ximos seis meses
+## Próximos seis meses
 
 - Avisos por correo mediante proveedor SMTP, con cola de reintentos y preferencia del cliente.
-- Adjuntos con lÃ­mites, almacenamiento privado y control de acceso.
-- MÃ©tricas de carga concurrente, equipos mÃ¡s amplios y reportes por departamento.
-- RecuperaciÃ³n de acceso por enlace y opciones de autenticaciÃ³n adicional.
+- Adjuntos con límites, almacenamiento privado y control de acceso.
+- Métricas de carga concurrente, equipos más amplios y reportes por departamento.
+- Recuperación de acceso por enlace y opciones de autenticación adicional.
 
-## Posible trabajo final de graduaciÃ³n
+## Posible trabajo final de graduación
 
-Evaluar el efecto de la asignaciÃ³n por carga y el escalamiento en tiempos de respuesta y satisfacciÃ³n. Comparar polÃ­ticas con datos sintÃ©ticos y posteriormente con datos anonimizados y autorizaciÃ³n de la organizaciÃ³n. Documentar metodologÃ­a, lÃ­mites, seguridad y reproducibilidad de los resultados.
+Evaluar el efecto de la asignación por carga y el escalamiento en tiempos de respuesta y satisfacción. Comparar políticas con datos sintéticos y posteriormente con datos anonimizados y autorización de la organización. Documentar metodología, límites, seguridad y reproducibilidad de los resultados.
