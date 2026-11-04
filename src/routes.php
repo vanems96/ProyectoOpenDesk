@@ -115,4 +115,16 @@ $app->patch('/api/users/{id}',function($req,$res,$args){
 });
 $app->get('/api/settings',fn($req,$res)=>jsonResponse($res,['hours'=>policy()]));
 $app->post('/api/settings',function($req,$res){if(!isAdmin())return deny($res);$hours=$req->getParsedBody()['hours']??[];foreach(SLA_HOURS as $p=>$default)if(!isset($hours[$p])||!is_int($hours[$p])||$hours[$p]<1||$hours[$p]>720)throw new InvalidArgumentException('Cada SLA debe tener entre 1 y 720 horas.');$hours=array_intersect_key($hours,SLA_HOURS);db()->odac_settings->updateOne(['id'=>'sla'],['$set'=>['hours'=>$hours]],['upsert'=>true]);audit('configurar_sla','sla',$hours);return jsonResponse($res,['ok'=>true]);});
-$app->get('/api/audit',fn($req,$res)=>isAdmin()?jsonResponse($res,db()->odac_audit->find([],['sort'=>['date'=>-1],'limit'=>200,'projection'=>['_id'=>0]])->toArray()):deny($res));
+$app->get('/api/audit',fn($req,$res)=>isAdmin()?jsonResponse($res,db()->odac_audit->find([],['sort'=>['date'=>-1,'id'=>-1],'limit'=>200,'projection'=>['_id'=>0]])->toArray()):deny($res));
+$app->post('/api/audit/pdf',function($req,$res){
+    if(!isAdmin())return deny($res);
+    $ids=$req->getParsedBody()['ids']??null;
+    if(!is_array($ids)||!array_is_list($ids)||count($ids)<1||count($ids)>50)throw new InvalidArgumentException('Seleccione entre 1 y 50 registros de auditoría.');
+    foreach($ids as $id)if(!is_string($id)||!preg_match('/^[A-Za-z0-9_-]{1,128}$/D',$id))throw new InvalidArgumentException('Registro de auditoría inválido.');
+    if(count(array_unique($ids))!==count($ids))throw new InvalidArgumentException('Hay registros repetidos.');
+    $found=db()->odac_audit->find(['id'=>['$in'=>$ids]],['limit'=>50,'projection'=>['_id'=>0,'id'=>1,'date'=>1,'actorName'=>1,'action'=>1,'target'=>1]])->toArray();
+    $byId=[];foreach($found as $row)$byId[$row['id']]=$row;
+    if(count($byId)!==count($ids))return jsonResponse($res,['error'=>'La vista cambió. Actualice Auditoría e intente otra vez.'],409);
+    $pdf=auditPdfDocument(array_map(fn($id)=>$byId[$id],$ids));$res->getBody()->write($pdf);
+    return $res->withHeader('Content-Type','application/pdf')->withHeader('Content-Disposition','attachment; filename="opendesk-auditoria.pdf"')->withHeader('Cache-Control','no-store')->withHeader('X-Content-Type-Options','nosniff');
+});

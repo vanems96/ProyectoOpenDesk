@@ -57,3 +57,7 @@ y [roadmap](roadmap.md). No se publican conexiones ni credenciales reales.
 Se completaron cinco recorridos HTTPS reales con tres roles, 27 peticiones por recorrido y 78 comprobaciones aprobadas. Mediana total: **4,718 s**. Cola desde MongoDB: **0,202 s**; desde Redis: **0,171 s**.
 
 [Informe y muestras](mediciones/http-2026-11-03/README.md). La nueva prueba incluye red y servidor, conserva los ensayos internos anteriores y no mide renderizado, tiempo humano, caída forzada de servicios ni carga concurrente. Se crearon cinco tickets sintéticos, todos cerrados con valoración DEMO; el total pasó de 27 a 32 y quedaron 0 abiertos.
+
+## Auditoría y PDF - 04/11/2026
+
+La suite `php tests/audit-pdf.php` añade 40 comprobaciones específicas a las 179 base: administrador, rechazo de cliente/agente/supervisor, CSRF, límites, IDs malformados/repetidos/inexistentes, los cuatro tamaños y PDF sin details. [Función, rutas y alcance](auditoria.md).

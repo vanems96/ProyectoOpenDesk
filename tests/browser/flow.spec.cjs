@@ -76,6 +76,26 @@ test('flujo UI completo, aislamiento, reportes y CRUD con motores reales',async(
     await admin.locator('#update-ticket [name=status]').selectOption('En atención');await admin.locator('#update-ticket [name=note]').fill('Reapertura sintética');await admin.locator('#update-ticket .primary').click();
     const all=await (await api(admin,'tickets')).json();expect(all.find(t=>t.id===id).resolvedAt).toBeUndefined();
     await admin.locator(`[data-ticket="${id}"]`).click();admin.once('dialog',d=>d.accept());await admin.locator('#delete-ticket').click();await expect(admin.locator('tbody tr').filter({hasText:subject})).toHaveCount(0);
+    await admin.locator('nav [data-view=audit]').click();
+    await expect(admin.locator('#audit-size')).toBeVisible();
+    const auditTotal=(await (await api(admin,'audit')).json()).length;
+    for(const size of [10,20,30,50]){
+      await admin.locator('#audit-size').selectOption(String(size));
+      await expect(admin.locator('#content tbody tr')).toHaveCount(Math.min(size,auditTotal));
+      await expect(admin.locator('#audit-prev')).toBeDisabled();
+      if(auditTotal>size){
+        await admin.locator('#audit-next').click();
+        await expect(admin.locator('#content tbody tr')).toHaveCount(Math.min(size,auditTotal-size));
+        await admin.locator('#audit-prev').click();
+      }
+      const pdfDownload=admin.waitForEvent('download');await admin.locator('#audit-pdf').click();
+      const pdf=await pdfDownload;expect(pdf.suggestedFilename()).toBe('opendesk-auditoria.pdf');
+      const pdfPath='test-results/auditoria-'+size+'.pdf';await pdf.saveAs(pdfPath);
+      const bytes=await fs.readFile(pdfPath);expect(bytes.subarray(0,8).toString()).toBe('%PDF-1.4');
+      expect(bytes.toString('latin1')).toContain('Vista seleccionada: '+Math.min(size,auditTotal)+' registros.');
+    }
+    await admin.screenshot({path:'test-results/auditoria.png',fullPage:true});
+    expect((await api(client,'audit/pdf','POST',{ids:['not-allowed']})).status()).toBe(403);
     const operations={workflow:'assignment, internal notes, solution proposal, notifications, customer closure, rating and teams passed',flow:'passed',roles:'passed',isolation:'passed',csv:'passed',reopen:'passed',delete:'passed',environment:'isolated CI browser and real MongoDB Redis',notWebmin:true};
     await fs.writeFile('test-results/flow-evidence.json',JSON.stringify(operations,null,2));
   }finally{await Promise.all(contexts.map(c=>c.close()));}

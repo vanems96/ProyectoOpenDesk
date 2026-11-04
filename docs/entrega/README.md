@@ -46,3 +46,7 @@ La versión **v1.0.0 cierra técnicamente el MVP**. El 04/11/2026 Joan aclaró q
 La confirmación del equipo del 04/11/2026 sustituye el estado anterior: instalación externa realizada y video opcional. El nombre de quien instaló, la fecha efectiva y sus capturas no fueron comunicados; se conservan como datos no informados, sin negar la ejecución confirmada. La subida al Aula y la exposición son acciones del equipo, cuya realización no se certifica desde el repositorio.
 
 El enunciado establece que no se cuentan commits posteriores al tag de entrega. Una corrección posterior requiere acordar con el docente qué versión entregará el grupo; no mover silenciosamente v1.0.0 ni otras etiquetas publicadas.
+
+## Ampliación final de Auditoría - 04/11/2026
+
+Joan autorizó actualizar la etiqueta y Release v1.0.0 para incluir selección de 10/20/30/50 registros, paginación y PDF de la vista seleccionada. [Uso y pruebas](../auditoria.md). Esta autorización explícita sustituye la intención anterior de conservar esa etiqueta sin cambios para esta entrega. El commit anterior permanece identificado en CHANGELOG y las notas de Release.
