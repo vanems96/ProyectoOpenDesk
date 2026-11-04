@@ -259,6 +259,10 @@ PHP no carga `.env` automáticamente. Docker Compose lo inyecta; en una instalac
 
 La carga `scripts/seed-mongosh.js` lee la URI exclusivamente del entorno; no contiene conexiones reales. Las contraseñas del despliegue compartido y las del Aula Virtual no forman parte del repositorio ni de la Release.
 
+## Auditoría y descarga en PDF
+
+El administrador puede elegir **10, 20, 30 o 50 registros por página**, recorrer los **200 eventos más recientes** con Anterior/Siguiente y descargar **solo la página visible** mediante Descargar vista en PDF. El archivo conserva orden, fecha, usuario, acción y registro, con fechas dd/mm/aaaa y zona de Costa Rica. No incluye detalles internos ni contraseñas. PHP genera el PDF directamente, sin servicios externos ni Composer; requiere la extensión estándar iconv. [Uso, permisos y pruebas](docs/auditoria.md).
+
 ## Uso y capturas
 
 ![Tickets y responsables](docs/img/tickets.png)

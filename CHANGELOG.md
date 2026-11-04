@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.0 - actualización final autorizada, 04/11/2026
+
+- Auditoría: selector 10/20/30/50, paginación de los 200 registros más recientes y descarga PDF de la página visible.
+- Exportación PHP con verificación de rol administrador y CSRF, datos leídos del servidor, límite de 50 IDs y exclusión de detalles internos.
+- Documentación de uso y 40 comprobaciones específicas de PDF añadidas a CI.
+- Joan autorizó expresamente actualizar la etiqueta y Release v1.0.0 para incluir este cambio. El commit anterior era 75468f3eb8d59e7b030b427f63035c372fef89c1.
+
+
 ## Corrección documental posterior a v1.0.0 - 04/11/2026
 
 - Video opcional e instalación externa realizada, según aclaración de Joan.

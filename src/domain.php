@@ -30,3 +30,40 @@ function reportData(array $tickets): array {
 const DEPARTMENTS=['ventas'=>'Ventas','garantias'=>'Garantías','entregas'=>'Entregas','reclamos'=>'Reclamos'];
 function departmentInput(mixed $id):string{if(!is_string($id)||!isset(DEPARTMENTS[$id]))throw new InvalidArgumentException('Departamento inválido.');return $id;}
 function teamFields(array $b,array $old=[]):array{$id=departmentInput($b['departmentId']??$old['departmentId']??'reclamos');$supervisor=$b['supervisor']??$old['supervisor']??false;if(!is_bool($supervisor))throw new InvalidArgumentException('Supervisor inválido.');return ['departmentId'=>$id,'supervisor'=>$supervisor];}
+
+
+// Standalone PDF writer: fixed fonts, escaped text, no HTML or remote resources.
+function auditPdfDocument(array $rows):string{
+    $escape=static function(string $s):string{
+        $s=preg_replace('/[\x00-\x1f\x7f]/u',' ',$s)??'';
+        $s=iconv('UTF-8','Windows-1252//TRANSLIT',$s);
+        return str_replace(['\\','(',')'],['\\\\','\\(','\\)'],$s===false?'':$s);
+    };
+    $text=static fn(float $x,float $y,string $s,int $size=9):string=>'BT /F1 '.$size.' Tf 1 0 0 1 '.$x.' '.$y.' Tm ('.$escape($s).") Tj ET\n";
+    $zone=new DateTimeZone('America/Costa_Rica');
+    $format=static fn(int $t):string=>(new DateTimeImmutable('@'.$t))->setTimezone($zone)->format('d/m/Y H:i');
+    $pages=[];$content='';$y=0;
+    $begin=static function()use(&$content,&$y,$text,$format,$rows){
+        $content="0.09 0.21 0.18 rg\n".$text(32,560,'OpenDesk - Auditoría',18).$text(32,540,'Vista seleccionada: '.count($rows).' registros. Generado: '.$format(time()).' (Costa Rica)',10);
+        $content.="0.93 0.95 0.92 rg 32 503 778 24 re f 0.09 0.21 0.18 rg\n";
+        foreach([[38,'Fecha'],[143,'Usuario'],[288,'Acción'],[468,'Registro']] as [$x,$s])$content.=$text($x,512,$s,10);
+        $y=491;
+    };
+    $finish=static function()use(&$pages,&$content,$text){$content.=$text(32,22,'OpenDesk - Auditoría | Página '.(count($pages)+1),8);$pages[]=$content;};
+    $begin();
+    foreach($rows as $row){
+        $values=[$format((int)$row['date']),(string)$row['actorName'],(string)$row['action'],(string)$row['target']];
+        $limits=[18,25,31,61];$lines=[];
+        foreach($values as $i=>$value){$value=iconv('UTF-8','Windows-1252//TRANSLIT',preg_replace('/[\x00-\x1f\x7f]/u',' ',$value)??'');$parts=explode("\n",wordwrap($value===false?'':$value,$limits[$i],"\n",true));$lines[]=array_map(static fn($s)=>iconv('Windows-1252','UTF-8',$s),$parts);}
+        $height=max(array_map('count',$lines))*12+12;
+        if($y-$height<40){$finish();$begin();}
+        foreach($lines as $i=>$parts)foreach($parts as $j=>$part)$content.=$text([38,143,288,468][$i],$y-$j*12,(string)$part);
+        $y-=$height;$content.="0.8 0.85 0.82 RG 32 ".($y+12).' m 810 '.($y+12)." l S\n";
+    }
+    $finish();$objects=[1=>'<< /Type /Catalog /Pages 2 0 R >>',3=>'<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>'];$kids=[];
+    foreach($pages as $i=>$stream){$page=4+$i*2;$obj=$page+1;$kids[]="$page 0 R";$objects[$page]="<< /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R >> >> /Contents $obj 0 R >>";$objects[$obj]='<< /Length '.strlen($stream).">>\nstream\n".$stream."endstream";}
+    $objects[2]='<< /Type /Pages /Count '.count($pages).' /Kids ['.implode(' ',$kids).'] >>';ksort($objects);$pdf="%PDF-1.4\n%\xe2\xe3\xcf\xd3\n";$offsets=[0];
+    foreach($objects as $n=>$object){$offsets[$n]=strlen($pdf);$pdf.="$n 0 obj\n$object\nendobj\n";}
+    $xref=strlen($pdf);$pdf.="xref\n0 ".(count($objects)+1)."\n0000000000 65535 f \n";foreach($objects as $n=>$_)$pdf.=sprintf("%010d 00000 n \n",$offsets[$n]);
+    return $pdf.'trailer << /Size '.(count($objects)+1)." /Root 1 0 R >>\nstartxref\n$xref\n%%EOF\n";
+}
