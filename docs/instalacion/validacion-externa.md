@@ -14,9 +14,9 @@ Cualquier persona que no haya configurado antes OpenDesk puede realizar esta com
 6. Detener y volver a iniciar los contenedores sin eliminar volúmenes y comprobar que los datos permanecen.
 7. Registrar los errores encontrados y si las soluciones del README fueron suficientes.
 
-## Registro a completar por quien realiza la prueba
+## Registro y datos de la prueba confirmada
 
-- Estado: PENDIENTE de ejecución por una persona externa a la configuración.
+- Estado: REALIZADA, confirmada por Joan el 04/11/2026. Identidad y fecha efectiva no comunicadas.
 - Persona o identificador autorizado:
 - Fecha en dd/mm/aaaa:
 - Sistema operativo:

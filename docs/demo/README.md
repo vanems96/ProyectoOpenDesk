@@ -1,6 +1,6 @@
 # Guion de exposición en vivo
 
-El video no se realiza por solicitud del equipo. El requisito del docente se mantiene registrado como pendiente y `portal.yml` no anuncia un enlace inexistente.
+El video es opcional según la aclaración de Joan del 04/11/2026. No se realizó y no constituye un pendiente del alcance comunicado. `portal.yml` conserva el enlace vacío porque no existe grabación. La demostración en vivo se guía con el siguiente recorrido.
 
 ## Recorrido del aplicativo
 

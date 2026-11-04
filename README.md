@@ -301,7 +301,7 @@ Después de editar componentes PHP, ejecutar `php scripts/sync-app.php`. El cheq
 
 [Matriz de requisitos y entrega v1.0.0](docs/entrega/README.md) · [CHANGELOG](CHANGELOG.md) · [S1](docs/seguimientos/S1.md) · [S2](docs/seguimientos/S2.md) · [S3](docs/seguimientos/S3.md) · [S4](docs/seguimientos/S4.md) · [Ficha portal](portal.yml)
 
-[Roadmap](docs/roadmap.md): en un mes, completar validación externa, accesibilidad, respaldo probado y gestión de permisos nativos; en seis meses, correo, adjuntos y prueba de carga; como posible TFG, comparación de asignaciones y satisfacción. Son trabajos futuros, no funciones terminadas de v1.0.0.
+[Roadmap](docs/roadmap.md): en un mes, accesibilidad, respaldo probado y gestión de permisos nativos; en seis meses, correo, adjuntos y prueba de carga; como posible TFG, comparación de asignaciones y satisfacción. Son trabajos futuros, no funciones terminadas de v1.0.0.
 
 El PDF del Aula Virtual incluye datos académicos y cuentas de prueba. Se entrega por separado al grupo; no se publica en GitHub. El docente exige entrega antes de las 18:00 del día de exposición y demo en vivo de 8–10 minutos dentro de 20–25 minutos de exposición, más cinco de preguntas.
 
