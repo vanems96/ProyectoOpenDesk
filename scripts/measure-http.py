@@ -20,7 +20,7 @@ if url.scheme!='https' or not url.hostname or url.username or url.password or ur
 required=['OD_BENCH_ADMIN_EMAIL','OD_BENCH_ADMIN_PASSWORD','OD_BENCH_CLIENT_EMAIL','OD_BENCH_AGENT_EMAIL','OD_BENCH_OTHER_CLIENT_EMAIL','OD_BENCH_DEMO_PASSWORD']
 if any(not os.environ.get(k) for k in required):parser.error('Configure todas las variables privadas OD_BENCH_ documentadas, sin publicar sus valores.')
 OUT=args.output.resolve();OUT.mkdir(parents=True,exist_ok=True)
-HOST=url.hostname;PORT=url.port or 443;BASE=url.path.rstrip('/')+'/' 
+HOST=url.hostname;PORT=url.port or 443;BASE=url.path.rstrip('/')+'/'
 samples=[];checks=[];runs=[]
 stamp=datetime.now(ZoneInfo('America/Costa_Rica')).strftime('%Y%m%d-%H%M%S')
 
