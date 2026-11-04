@@ -6,7 +6,7 @@ Sistema web open source para consultas, garantías, entregas, devoluciones y rec
 
 [Aplicación desplegada](https://grupo3.crnube.org/Opendesk/) · [Presentación final](docs/presentacion/OpenDesk_exposicion_final_v1.0.0.pptx) · [Presentación PDF](docs/presentacion/OpenDesk_exposicion_final_v1.0.0.pdf) · [Matriz de entrega](docs/entrega/README.md) · [Mediciones](docs/mediciones/README.md)
 
-El software y su documentación cierran en v1.0.0. Hay dos requisitos académicos pendientes: el equipo no realizó video y un compañero hará posteriormente la instalación siguiendo este README. La prueba automatizada no se atribuye a una persona. El docente conserva la evaluación de esos puntos; publicar una versión no los acredita. [Estado y evidencias](docs/entrega/README.md).
+El software y su documentación cierran en v1.0.0. Actualización del 04/11/2026: Joan confirmó que el video es opcional y que la instalación por otra persona ya se realizó. Por tanto, esos dos puntos dejan de figurar como pendientes. La confirmación del equipo se registra separadamente de las pruebas automatizadas; no se inventan nombre, fecha de ejecución ni capturas. [Estado y evidencias](docs/entrega/README.md).
 
 ## Problema, usuarios y alcance
 
@@ -197,7 +197,7 @@ docker compose exec app php scripts/export-webmin.php
 
 ### 13 Registrar la instalación del compañero
 
-Complete [validación externa](docs/instalacion/validacion-externa.md) con su nombre o identificador autorizado, fecha, sistema, versión, pasos, problemas y resultado. Anexe capturas sin contraseñas. Su firma o confirmación debe corresponder a lo que efectivamente hizo. El registro sigue pendiente hasta entonces; CI no lo firma en nombre de una persona.
+Complete [validación externa](docs/instalacion/validacion-externa.md) con su nombre o identificador autorizado, fecha, sistema, versión, pasos, problemas y resultado. Anexe capturas sin contraseñas. Su firma o confirmación debe corresponder a lo que efectivamente hizo. Joan confirmó el 04/11/2026 que la instalación externa ya se realizó. El registro conserva esa confirmación; los datos no comunicados no se inventan. CI corresponde a una prueba independiente.
 
 ## Errores frecuentes
 
@@ -265,7 +265,7 @@ La carga `scripts/seed-mongosh.js` lee la URI exclusivamente del entorno; no con
 ![Departamentos y equipos](docs/img/equipos.png)
 ![Valoración de atención](docs/img/valoracion.png)
 
-Las capturas corresponden a datos sintéticos de un entorno de prueba. [Guion de demo en vivo](docs/demo/README.md) · [Guion de exposición](docs/presentacion/guion.md). **Video: no realizado**, según la decisión comunicada por el equipo. No se proporciona un enlace inexistente ni se afirma exención del docente.
+Las capturas corresponden a datos sintéticos de un entorno de prueba. [Guion de demo en vivo](docs/demo/README.md) · [Guion de exposición](docs/presentacion/guion.md). **Video: opcional, no realizado**, según la aclaración de Joan del 04/11/2026. No constituye un pendiente del alcance comunicado y no se proporciona un enlace inexistente.
 
 ## Pruebas, fallos y mediciones
 
@@ -301,7 +301,7 @@ Después de editar componentes PHP, ejecutar `php scripts/sync-app.php`. El cheq
 
 [Matriz de requisitos y entrega v1.0.0](docs/entrega/README.md) · [CHANGELOG](CHANGELOG.md) · [S1](docs/seguimientos/S1.md) · [S2](docs/seguimientos/S2.md) · [S3](docs/seguimientos/S3.md) · [S4](docs/seguimientos/S4.md) · [Ficha portal](portal.yml)
 
-[Roadmap](docs/roadmap.md): en un mes, completar validación externa, accesibilidad, respaldo probado y gestión de permisos nativos; en seis meses, correo, adjuntos y prueba de carga; como posible TFG, comparación de asignaciones y satisfacción. Son trabajos futuros, no funciones terminadas de v1.0.0.
+[Roadmap](docs/roadmap.md): en un mes, accesibilidad, respaldo probado y gestión de permisos nativos; en seis meses, correo, adjuntos y prueba de carga; como posible TFG, comparación de asignaciones y satisfacción. Son trabajos futuros, no funciones terminadas de v1.0.0.
 
 El PDF del Aula Virtual incluye datos académicos y cuentas de prueba. Se entrega por separado al grupo; no se publica en GitHub. El docente exige entrega antes de las 18:00 del día de exposición y demo en vivo de 8–10 minutos dentro de 20–25 minutos de exposición, más cinco de preguntas.
 

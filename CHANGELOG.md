@@ -1,5 +1,11 @@
 # Changelog
 
+## Corrección documental posterior a v1.0.0 - 04/11/2026
+
+- Video opcional e instalación externa realizada, según aclaración de Joan.
+- Se conserva inmutable v1.0.0. Esta aclaración actualiza main y las notas de Release, sin atribuir datos de instalación no comunicados.
+
+
 ## v1.0.0 · 03/11/2026
 
 - Cierre técnico del MVP de atención al cliente: roles, equipos, tickets, SLA, notificaciones internas, satisfacción y auditoría.

@@ -1,20 +1,22 @@
 {
   "version": "1.0.0",
-  "date": "03/11/2026",
+  "date": "04/11/2026",
   "software_scope": "MVP PHP MongoDB Redis",
   "software_release_ready": true,
-  "academic_requirements_complete": false,
   "video": {
-    "status": "not_produced",
+    "status": "optional_not_produced",
+    "required": false,
     "url": "",
-    "basis": "El usuario confirmó el 03/11/2026 que no hay video; no se afirma exención docente."
+    "basis": "Joan aclaró el 04/11/2026 que el video no es obligatorio."
   },
   "independent_installation": {
-    "status": "pending",
+    "status": "completed_reported",
     "person": null,
     "date": null,
-    "result": null,
-    "basis": "El usuario indicó que un compañero la realizará próximamente siguiendo el README."
+    "result": "Realizada, según confirmación de Joan",
+    "confirmation_date": "04/11/2026",
+    "confirmed_by": "Joan",
+    "basis": "Joan confirmó que otra persona ya realizó la instalación. No comunicó nombre, fecha efectiva ni capturas."
   },
   "native_schema_webmin": {
     "status": "deferred",
@@ -24,6 +26,8 @@
   "individual_commits": {
     "status": "scope_exception",
     "evidence": "docs/seguimientos/S1.md",
-    "basis": "Excepción comunicada por Joan: él realiza los commits y PR."
-  }
+    "basis": "ExcepciÃ³n comunicada por Joan: Ã©l realiza los commits y PR."
+  },
+  "academic_scope_ready": true,
+  "academic_delivery_complete": null
 }

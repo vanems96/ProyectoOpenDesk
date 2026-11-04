@@ -11,7 +11,7 @@ ya tienen responsable e hito S4, y cierran con la entrega técnica v1.0.0.
 | S2 Núcleo funcional | JoaChP | Cerrado |
 | S3 Integración pruebas y medición | JoaChP | Cerrado; evidencias de integración, fallos y mediciones |
 | Operación posterior a S3 | JoaChP | #13 abierta: administrador debe habilitar o aplicar collMod |
-| S4 Semana 16 Release candidate | JoaChP | Logo #1, presentación #28 y carpeta de entrega #29 completados; #24 instalación humana pendiente |
+| S4 Semana 16 Release candidate | JoaChP | Logo #1, presentación #28 y carpeta de entrega #29 completados; #24 instalación humana realizada, confirmada por Joan el 04/11/2026 |
 
 La excepción comunicada por Joan permite que solo él realice commits y PR.
 #8 se cerró como no planificada por ese cambio de alcance, no como una
@@ -21,9 +21,9 @@ El requisito de S1 es disponer de tareas organizadas con responsable e hito;
 no exige que los trabajos de S4 u operación ya estén terminados. La tarea #13
 permanece visible y abierta porque el permiso del servidor sigue faltando.
 
-La Release v1.0.0 es un cierre técnico. El video no existe y la instalación
-por otra persona se realizará después, según lo comunicado por el equipo.
-Esos requisitos no se cierran por haber pasado CI. La matriz completa está
+La Release v1.0.0 cierra el MVP. Joan aclaró el 04/11/2026 que el video es
+opcional y que la instalación por otra persona ya se realizó. Se cierra #24
+por esa confirmación, de forma independiente a CI. La matriz completa está
 en [entrega](entrega/README.md).
 
 [Issues](https://github.com/vanems96/ProyectoOpenDesk/issues) ·

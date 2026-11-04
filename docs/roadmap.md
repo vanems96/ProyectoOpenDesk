@@ -2,7 +2,7 @@
 
 ## Próximo mes
 
-- Completar la instalación externa con el formulario de validación y registrar sus resultados después del cierre técnico v1.0.0.
+- Conservar el registro de la instalación externa ya realizada, confirmada por Joan el 04/11/2026; agregar datos y capturas si el equipo los proporciona.
 - Solicitar al administrador de MongoDB en Webmin la activación nativa de validadores, además de la validación PHP vigente.
 - Revisar la accesibilidad, los mensajes de error y la paginación para más tickets.
 - Configurar pruebas de respaldo y restauración con datos sintéticos.

@@ -1,3 +1,5 @@
+> **Estado vigente, 04/11/2026:** Joan confirmó que la instalación por otra persona ya se realizó y que el video es opcional. Las menciones de pendientes anteriores se conservan como historia y quedan sustituidas por esta actualización. No se comunicaron nombre del instalador, fecha efectiva ni capturas; no se inventan.
+
 # Validación de instalación por otra persona
 
 Cualquier persona que no haya configurado antes OpenDesk puede realizar esta comprobación. Debe empezar con una carpeta nueva y seguir únicamente el README, sin reutilizar archivos privados del servidor del equipo.
@@ -12,9 +14,9 @@ Cualquier persona que no haya configurado antes OpenDesk puede realizar esta com
 6. Detener y volver a iniciar los contenedores sin eliminar volúmenes y comprobar que los datos permanecen.
 7. Registrar los errores encontrados y si las soluciones del README fueron suficientes.
 
-## Registro a completar por quien realiza la prueba
+## Registro y datos de la prueba confirmada
 
-- Estado: PENDIENTE de ejecución por una persona externa a la configuración.
+- Estado: REALIZADA, confirmada por Joan el 04/11/2026. Identidad y fecha efectiva no comunicadas.
 - Persona o identificador autorizado:
 - Fecha en dd/mm/aaaa:
 - Sistema operativo:
@@ -31,3 +33,7 @@ La prueba automatizada de instalación limpia complementa este registro, pero no
 ## Actualización del 03/11/2026
 
 El equipo confirmó que un compañero hará esta instalación próximamente. Debe utilizar el tag v1.0.0 y seguir los pasos 1–13 del README. Este registro permanece pendiente hasta su ejecución real. Adjuntar identificación autorizada, fecha, resultados esperados observados, incidencias y capturas sin contraseñas.
+
+## Confirmación de cierre del 04/11/2026
+
+Instalación externa: realizada según confirmación de Joan. Video: opcional, no producido. El registro de CI es evidencia automatizada separada. Los datos de identidad y fecha de ejecución no informados permanecen sin completar; esto no cambia la confirmación de que la instalación ocurrió.
