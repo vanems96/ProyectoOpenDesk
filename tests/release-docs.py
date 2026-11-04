@@ -27,7 +27,10 @@ print('S4: archivos, enlaces, ficha, PowerPoint y evidencia de instalación veri
 # The technical release must not certify academic activities that did not occur.
 assert (root/'VERSION').read_text().strip()=='1.0.0'
 delivery=json.loads((root/'docs/entrega/estado-v1.0.0.json').read_text(encoding='utf-8'))
-assert delivery['academic_requirements_complete'] is False
+assert delivery['academic_scope_ready'] is True
+assert delivery['video']['required'] is False
+assert delivery['independent_installation']['status']=='completed_reported'
+assert delivery['independent_installation']['confirmation_date']=='04/11/2026'
 for extension in ['pptx','pdf']:
  path=root/f'docs/presentacion/OpenDesk_exposicion_final_v1.0.0.{extension}'
  assert path.is_file() and path.stat().st_size>10000,path

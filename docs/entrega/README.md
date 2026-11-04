@@ -2,7 +2,7 @@
 
 Fecha: 03/11/2026. Autores: Joan Enrique Chavarría Peraza, Mariela Morales Segura y Emily Muñoz Rodríguez. Grupo 3, viernes, II-2026.
 
-La versión **v1.0.0 cierra técnicamente el MVP**. La evidencia no acredita todavía el video ni una instalación hecha por otra persona. El usuario confirmó que no hay video y que un compañero instalará después. Esa decisión no se presenta como exención autorizada por el docente. [Estado verificable](estado-v1.0.0.json).
+La versión **v1.0.0 cierra técnicamente el MVP**. El 04/11/2026 Joan aclaró que el video es opcional y confirmó que otra persona ya realizó la instalación. Se actualiza el estado según esa confirmación del equipo, sin atribuirle las pruebas de CI ni inventar datos personales o evidencias no proporcionadas. [Estado verificable](estado-v1.0.0.json).
 
 ## Requisitos y evidencia
 
@@ -25,8 +25,8 @@ La versión **v1.0.0 cierra técnicamente el MVP**. La evidencia no acredita tod
 | MongoDB: colecciones, índices, explain y agregación | Implementado y medido | [Modelo](../modelo-datos.md), [JSON de medición](../mediciones/webmin-2026-10-23.json) |
 | JSON Schema | PHP en Webmin; nativo en CI | [S3](../seguimientos/S3.md), [Issue #13](https://github.com/vanems96/ProyectoOpenDesk/issues/13). collMod del servidor sigue reprogramado |
 | README instalable desde cero | Preparado y probado automáticamente | [Pasos 1–13](../../README.md), workflow de instalación limpia |
-| Instalación por alguien que no lo configuró | **Pendiente** | [Registro para el compañero](../instalacion/validacion-externa.md) |
-| Video de 3–5 minutos | **No realizado** | [Demo](../demo/README.md), portal.yml sin enlace inventado |
+| Instalación por alguien que no lo configuró | **Realizada, confirmada por Joan el 04/11/2026** | [Registro para el compañero](../instalacion/validacion-externa.md) |
+| Video de 3–5 minutos | **Opcional; no realizado, sin pendiente de alcance** | [Demo](../demo/README.md), portal.yml sin enlace inventado |
 | Presentación final y guion | Listo | [PPT](../presentacion/OpenDesk_exposicion_final_v1.0.0.pptx), [PDF](../presentacion/OpenDesk_exposicion_final_v1.0.0.pdf), [guion](../presentacion/guion.md) |
 | Changelog y Release | Cierre técnico v1.0.0 | [Cambios](../../CHANGELOG.md), [Release](https://github.com/vanems96/ProyectoOpenDesk/releases/tag/v1.0.0) |
 | Roadmap a un mes, seis meses y posible TFG | Listo | [Roadmap](../roadmap.md) |
@@ -41,8 +41,8 @@ La versión **v1.0.0 cierra técnicamente el MVP**. La evidencia no acredita tod
 - Paquete Webmin: index.php, assets/, VERSION y licencia, sin secretos. Su configuración se conserva fuera de public_html.
 - Paquete privado del Aula: un único PDF con datos académicos y credenciales de aplicación de prueba. No subir ese PDF al repositorio público.
 
-## Cómo cerrar los pendientes académicos
+## Confirmación actualizada y trazabilidad
 
-Cuando el compañero haga la instalación, completar el registro con sus resultados reales y evidencia. El video solo puede marcarse realizado cuando exista y se enlaza el mismo URL en README y portal.yml. Si el docente autoriza una excepción, registrar su alcance sin afirmar que hubo una grabación o instalación que no ocurrió.
+La confirmación del equipo del 04/11/2026 sustituye el estado anterior: instalación externa realizada y video opcional. El nombre de quien instaló, la fecha efectiva y sus capturas no fueron comunicados; se conservan como datos no informados, sin negar la ejecución confirmada. La subida al Aula y la exposición son acciones del equipo, cuya realización no se certifica desde el repositorio.
 
 El enunciado establece que no se cuentan commits posteriores al tag de entrega. Una corrección posterior requiere acordar con el docente qué versión entregará el grupo; no mover silenciosamente v1.0.0 ni otras etiquetas publicadas.

@@ -48,6 +48,6 @@ Crear o elegir cuentas ficticias para administrador, agente y cliente. Preparar 
 - Qué validación existe en PHP y cuál depende de permisos administrativos en MongoDB.
 - Cómo otra persona instala y verifica la aplicación desde cero.
 
-## Pendientes declarados
+## Estado de cierre actualizado el 04/11/2026
 
-El equipo confirmó el 03/11/2026 que no hay video. La instalación por otra persona sigue pendiente de evidencia humana; la prueba automatizada no se firma en su nombre. Los autores figuran en el README y portal.yml. La versión técnica v1.0.0 incluye la presentación final y el PDF del Aula se entrega por separado, con sus cuentas de prueba. La publicación no acredita los dos requisitos académicos pendientes.
+Joan confirmó que el video es opcional y que la instalación externa ya se realizó. Las referencias a esos pendientes en materiales preparados el 03/11/2026 son históricas. La versión v1.0.0 conserva su etiqueta original; esta corrección documental posterior no mueve el tag. El permiso collMod de Webmin sigue como mejora operativa #13: PHP valida el negocio y CI verifica el schema nativo.

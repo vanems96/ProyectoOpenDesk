@@ -6,7 +6,7 @@ Sistema web open source para consultas, garantías, entregas, devoluciones y rec
 
 [Aplicación desplegada](https://grupo3.crnube.org/Opendesk/) · [Presentación final](docs/presentacion/OpenDesk_exposicion_final_v1.0.0.pptx) · [Presentación PDF](docs/presentacion/OpenDesk_exposicion_final_v1.0.0.pdf) · [Matriz de entrega](docs/entrega/README.md) · [Mediciones](docs/mediciones/README.md)
 
-El software y su documentación cierran en v1.0.0. Hay dos requisitos académicos pendientes: el equipo no realizó video y un compañero hará posteriormente la instalación siguiendo este README. La prueba automatizada no se atribuye a una persona. El docente conserva la evaluación de esos puntos; publicar una versión no los acredita. [Estado y evidencias](docs/entrega/README.md).
+El software y su documentación cierran en v1.0.0. Actualización del 04/11/2026: Joan confirmó que el video es opcional y que la instalación por otra persona ya se realizó. Por tanto, esos dos puntos dejan de figurar como pendientes. La confirmación del equipo se registra separadamente de las pruebas automatizadas; no se inventan nombre, fecha de ejecución ni capturas. [Estado y evidencias](docs/entrega/README.md).
 
 ## Problema, usuarios y alcance
 
@@ -197,7 +197,7 @@ docker compose exec app php scripts/export-webmin.php
 
 ### 13 Registrar la instalación del compañero
 
-Complete [validación externa](docs/instalacion/validacion-externa.md) con su nombre o identificador autorizado, fecha, sistema, versión, pasos, problemas y resultado. Anexe capturas sin contraseñas. Su firma o confirmación debe corresponder a lo que efectivamente hizo. El registro sigue pendiente hasta entonces; CI no lo firma en nombre de una persona.
+Complete [validación externa](docs/instalacion/validacion-externa.md) con su nombre o identificador autorizado, fecha, sistema, versión, pasos, problemas y resultado. Anexe capturas sin contraseñas. Su firma o confirmación debe corresponder a lo que efectivamente hizo. Joan confirmó el 04/11/2026 que la instalación externa ya se realizó. El registro conserva esa confirmación; los datos no comunicados no se inventan. CI corresponde a una prueba independiente.
 
 ## Errores frecuentes
 
@@ -265,7 +265,7 @@ La carga `scripts/seed-mongosh.js` lee la URI exclusivamente del entorno; no con
 ![Departamentos y equipos](docs/img/equipos.png)
 ![Valoración de atención](docs/img/valoracion.png)
 
-Las capturas corresponden a datos sintéticos de un entorno de prueba. [Guion de demo en vivo](docs/demo/README.md) · [Guion de exposición](docs/presentacion/guion.md). **Video: no realizado**, según la decisión comunicada por el equipo. No se proporciona un enlace inexistente ni se afirma exención del docente.
+Las capturas corresponden a datos sintéticos de un entorno de prueba. [Guion de demo en vivo](docs/demo/README.md) · [Guion de exposición](docs/presentacion/guion.md). **Video: opcional, no realizado**, según la aclaración de Joan del 04/11/2026. No constituye un pendiente del alcance comunicado y no se proporciona un enlace inexistente.
 
 ## Pruebas, fallos y mediciones
 
